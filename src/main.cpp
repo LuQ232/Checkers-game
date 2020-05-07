@@ -3,7 +3,12 @@
 #include "board.h"
 
 int main (){
-	std::cout<<"Lets begin"<<std::endl;
-	
+	Board board;
+	while (true)
+	{
+	board.display();
+	board.move();
+	board.change_turn();
+	}
 	return 0;
 }
