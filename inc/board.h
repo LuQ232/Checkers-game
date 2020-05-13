@@ -12,7 +12,7 @@
 
 class Board{
 
-	std::vector<std::vector<char>> fields;
+	std::vector<std::vector<Field>> fields;
 	std::vector<std::vector<Field>> possible_captures;
 	std::vector<std::vector<Field>> possible_moves;
 	char turn;
@@ -26,9 +26,9 @@ class Board{
 	char next_turn();
 
 	int number_of_actual_turn_pawns();
-	
+	void display_data();
 	void move();
-
+	void update_kings();
 	void update_possible_captures();
 	const bool is_any_capture_mandatory();
 	const bool is_any_move_possible();
