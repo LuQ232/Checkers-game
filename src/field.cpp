@@ -1,6 +1,13 @@
 #include "field.h"
 
-
+Field::Field()
+{
+}
+Field::Field(int x1, int x2)
+{
+	x=x1;
+	y=x2;
+}
 void Field::set(int x1,int x2)
 {
 	x=x1;

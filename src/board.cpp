@@ -58,26 +58,216 @@ void Board::change_turn()
 	}
 }
 
-bool Board::is_move_possible(Field start, Field destination)
+char Board::actual_turn()
 {
-	//TO GET ACTUA DATA REMEMBER ABOUT get_x-1!!!! -1!!!
-	//std::cout<<"TEST"<<std::endl;
-	//std::cout<<"Actual turn its ->"<<turn<<std::endl;
-	//std::cout<<"Choosen pawn->"<<fields[start.get_x()-1][start.get_y()-1];
-	if(turn==fields[start.get_x()-1][start.get_y()-1]) // IF YOUR PAWN CHOOSEN
+	if(turn=='O')
 	{
-		if(range_of_move(start,destination)==1) // IF RANGE IS GOOD
+		return 'O';
+	}else if(turn=='X')
+	{
+		return 'X';
+	}
+}
+
+
+char Board::next_turn()
+{
+	if(turn=='O')
+	{
+		return 'X';
+	}else if(turn=='X')
+	{
+		return 'O';
+	}
+}
+		
+int Board::number_of_actual_turn_pawns()
+{
+	int h=0;
+	for(int i=0;i<fields.size();i++)
+	{
+		for(int j=0;j<fields[i].size();j++)
 		{
-			//TODO - ALL CASES
-			//std::cout<<"RANGE OF MOVE WAS->"<<range_of_move(start,destination)<<std::endl;
-			
+			if(fields[i][j]==turn)
+				h++;
+		}
+	}
+	return h;
+}
+
+void Board::update_possible_moves()
+{
+	int h=0;
+possible_moves.clear(); //clear last turn vector
+	possible_moves.resize(number_of_actual_turn_pawns());
+	for(int i=0;i<fields.size();i++)
+	{
+		for(int j=0;j<fields[i].size();j++)
+		{
+			if(fields[i][j]==turn)
+			{
+				//std::cout<<"Point->"<<Field(i+1,j+1)<<std::endl;
+				possible_moves[h].emplace_back(i,j);
+				h++;
+			}
+		}
+	}
+	// Adding possible captures to possible moves
+	for(int i=0;i<possible_captures.size();i++)
+	{
+		for(int j=0;j<possible_captures[i].size();j++)
+		{
+			if(j>0)
+			{
+				possible_moves[i].emplace_back(possible_captures[i][j]);
+			}
+		}
+	}
+
+//TODO: add all possible moves to possible_moves vector
+
+
+
+
+
+// print
+for(int i=0;i<possible_moves.size();i++)
+	{
+		for(int j=0;j<possible_moves[i].size();j++)
+		{
+			std::cout<<possible_moves[i][j];
+		}
+		std::cout<<std::endl;
+	}
+}
+
+void Board::update_possible_captures()
+{
+	int h=0;
+	possible_captures.clear(); //clear last turn vector
+	possible_captures.resize(number_of_actual_turn_pawns());
+	for(int i=0;i<fields.size();i++)
+	{
+		for(int j=0;j<fields[i].size();j++)
+		{
+			if(fields[i][j]==turn)
+			{
+				//std::cout<<"Point->"<<Field(i+1,j+1)<<std::endl;
+				possible_captures[h].emplace_back(i,j);
+				h++;
+			}
+		}
+	}
+
+	for(int i=0;i<possible_captures.size();i++)
+	{
+
+			if(possible_captures[i][0].get_x()-2 >= 0  && possible_captures[i][0].get_y() -2 >=0 ) // If we are not going out of array
+			{
+				if(fields[possible_captures[i][0].get_x()-1][possible_captures[i][0].get_y()-1] == next_turn() )//left top
+				{
+					if(fields[possible_captures[i][0].get_x()-2][possible_captures[i][0].get_y()-2] == ' ')				
+					{
+						possible_captures[i].emplace_back(possible_captures[i][0].get_x()-2,possible_captures[i][0].get_y()-2);
+					}
+				}	
+			}
+			if(possible_captures[i][0].get_x()+2 <= 7 && possible_captures[i][0].get_y()-2 >= 0)// If we are not going out of array
+			{
+				if(fields[possible_captures[i][0].get_x()+1][possible_captures[i][0].get_y()-1] == next_turn() )//left bottom
+				{
+					if(fields[possible_captures[i][0].get_x()+2][possible_captures[i][0].get_y()-2] == ' ')				
+					{
+						possible_captures[i].emplace_back(possible_captures[i][0].get_x()+2,possible_captures[i][0].get_y()-2);
+					}
+				}
+			}
+			if(possible_captures[i][0].get_x()-2 >= 0 && possible_captures[i][0].get_y()+2 <= 7)// If we are not going out of array
+			{
+				if(fields[possible_captures[i][0].get_x()-1][possible_captures[i][0].get_y()+1] == next_turn() )//right top
+				{
+					
+					if(fields[possible_captures[i][0].get_x()-2][possible_captures[i][0].get_y()+2] == ' ')				
+					{
+						possible_captures[i].emplace_back(possible_captures[i][0].get_x()-2,possible_captures[i][0].get_y()+2);
+					}
+				}	
+			}
+			if(possible_captures[i][0].get_x()+2 <= 7 && possible_captures[i][0].get_y()+2 <= 7)// If we are not going out of array
+			{
+				if(fields[possible_captures[i][0].get_x()+1][possible_captures[i][0].get_y()+1] == next_turn() )//right bottom
+				{
+					if(fields[possible_captures[i][0].get_x()+2][possible_captures[i][0].get_y()+2] == ' ')				
+					{
+						possible_captures[i].emplace_back(possible_captures[i][0].get_x()+2,possible_captures[i][0].get_y()+2);
+					}
+				}
+			}
+	}
+
+
+
+	std::cout<<"WYSWIETLAM MOZLIWOSCI!!!"<<std::endl;
+
+	for(int i=0;i<possible_captures.size();i++)
+	{
+		for(int j=0;j<possible_captures[i].size();j++)
+		{
+			std::cout<<possible_captures[i][j];
+		}
+		std::cout<<std::endl;
+	}
+
+}
+
+const bool Board::is_any_capture_mandatory()
+{
+	for(int i=0;i<possible_captures.size();i++)
+	{
+		if(possible_captures[i].size()>1)
+			return true;		
+	}
+	return false;
+}
+
+const bool Board::is_move_forward(Field start, Field destination)
+{
+	if(fields[start.get_x()][start.get_y()]=='X')
+	{
+		if(destination.get_x()<start.get_x())
+		{
 			return true;
 		}else
 		{
-			std::cout<<"YOU CANT MOVE THAT FAR!!"<<std::endl;
 			return false;
 		}
-		
+	}
+
+	if(fields[start.get_x()][start.get_y()]=='O')
+	{
+		if(destination.get_x()>start.get_x())
+		{
+			return true;
+		}else
+		{
+			return false;
+		}	
+	}
+
+}
+
+const bool Board::is_move_possible(Field start, Field destination)
+{
+	if(turn == fields[start.get_x()][start.get_y()]) // IF YOUR PAWN CHOOSEN
+	{
+		if(is_move_forward(start,destination))
+		{
+			return true;
+		}else
+		{
+			std::cout<<"YOU HAVE TO MOVE FORWARD!"<<std::endl;
+			return false;
+		}
 	}else
 	{
 		std::cout<<"IT'S NOT YOUR PAWN! / IT'S NOT PAWN!"<<std::endl;
@@ -107,9 +297,15 @@ void Board::display()
 
 void Board::move()
 {
+	update_possible_captures();
+	update_possible_moves();
 	Field which;
 	Field where;
 	int which_i,which_j,where_i,where_j;
+	if(is_any_capture_mandatory())
+	{
+		std::cout<<"THERE IS AT LEAST 1 CAPTURE MANDATORY!"<<std::endl;
+	}
 	do
 	{
 	std::cout<<"Which pawn to move? Row:";
@@ -150,8 +346,9 @@ void Board::move()
 		std::cin.ignore(1000, '\n');
 		std::cin>>where_j;
 	}
-	which.set(which_i,which_j);
-	where.set(where_i,where_j);
+
+	which.set(which_i-1,which_j-1);
+	where.set(where_i-1,where_j-1);
 	std::cout<<std::endl;
 	}while(!is_move_possible(which,where));
 
@@ -160,8 +357,8 @@ void Board::move()
 	if(is_move_possible(which,where))
 	{
 		std::cout<<std::endl<<"Move is possible"<<std::endl;
-		fields[where_i-1][where_j-1]=turn;
-		fields[which_i-1][which_j-1]=' ';
+		fields[where.get_x()][where.get_y()]=turn;
+		fields[which.get_x()][which.get_y()]=' ';
 	}
 ////////////////////////////DOIING MOVE!/////////////////////////////
 	//
