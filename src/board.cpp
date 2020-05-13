@@ -34,6 +34,18 @@ Board::Board()
 		}
 	}
 
+	/*
+///////////FOR TESTS!!!
+	for(int i=0;i<fields.size();i++)
+	{
+		for(int j=0;j<fields[i].size();j++)
+		{
+			fields[i][j]=' ';
+		}
+	}
+	fields[7][7]= 'X';
+	fields[0][0]= 'O';
+	*/
 	turn ='X';
 }
 
@@ -181,6 +193,7 @@ for(int i=0;i<possible_moves.size();i++)
 
 	std::cout<<"WYSWIETLAM MOZLIWOSCI!!!"<<std::endl;
 // print
+	std::cout<<"Ilosc pionkow: "<<possible_moves.size()<<std::endl;
 for(int i=0;i<possible_moves.size();i++)
 	{
 		for(int j=0;j<possible_moves[i].size();j++)
@@ -280,6 +293,16 @@ const bool Board::is_any_capture_mandatory()
 	return false;
 }
 
+const bool Board::is_any_move_possible()
+{
+	for(int i=0;i<possible_moves.size();i++)
+	{
+		if(possible_moves[i].size()>1)
+			return true;		
+	}
+	return false;
+}
+
 const bool Board::is_move_forward(Field start, Field destination)
 {
 	if(fields[start.get_x()][start.get_y()]=='X')
@@ -306,27 +329,104 @@ const bool Board::is_move_forward(Field start, Field destination)
 
 }
 
-const bool Board::is_move_possible(Field start, Field destination)
+
+const bool Board::is_this_move_on_possible_captures(Field start, Field destination)
 {
-	/*
-	if(turn == fields[start.get_x()][start.get_y()]) // IF YOUR PAWN CHOOSEN
+
+	for(int i=0;i<possible_captures.size();i++)
 	{
-		if(is_move_forward(start,destination))
+		for(int j=0;j<possible_captures[i].size();j++)
 		{
-			return true;
-		}else
-		{
-			std::cout<<"YOU HAVE TO MOVE FORWARD!"<<std::endl;
-			return false;
+			if(j>0)
+			{
+				if(
+				start.get_x() == possible_captures[i][0].get_x() &&
+				start.get_y() == possible_captures[i][0].get_y() &&
+				destination.get_x() == possible_captures[i][j].get_x() &&
+				destination.get_y() == possible_captures[i][j].get_y() )
+				{
+					return true;
+				}
+			}
 		}
-	}else
-	{
-		std::cout<<"IT'S NOT YOUR PAWN! / IT'S NOT PAWN!"<<std::endl;
-		return false;
 	}
 	return false;
-	*/
-	return true;
+}
+
+
+const bool Board::is_this_move_on_possible_moves(Field start, Field destination)
+{
+	for(int i=0;i<possible_moves.size();i++)
+	{
+		for(int j=0;j<possible_moves[i].size();j++)
+		{
+			if(j>0)
+			{
+				if(
+				start.get_x() == possible_moves[i][0].get_x() &&
+				start.get_y() == possible_moves[i][0].get_y() &&
+				destination.get_x() == possible_moves[i][j].get_x() &&
+				destination.get_y() == possible_moves[i][j].get_y() )
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+void Board::delete_captured_pawn(Field start, Field destination)
+{
+	if(start.get_x()>destination.get_x() && start.get_y()>destination.get_y()) // capture was in LEFT TOP direction
+	{
+		fields[destination.get_x()+1][destination.get_y()+1] = ' ';
+	}else if(start.get_x()>destination.get_x() && start.get_y()<destination.get_y()) // capture was in RIGHT TOP direction
+	{
+		fields[destination.get_x()+1][destination.get_y()-1] = ' ';
+
+	}else if(start.get_x()<destination.get_x() && start.get_y()>destination.get_y()) // capture was in LEFT BOTTOM direction
+	{
+		fields[destination.get_x()-1][destination.get_y()+1] = ' ';
+
+	}else if(start.get_x()<destination.get_x() && start.get_y()<destination.get_y()) // capture was in RIGHT BOTTOM direction
+	{
+		fields[destination.get_x()-1][destination.get_y()-1] = ' ';
+
+	}else
+	{
+		std::cout<<"ERROR";
+	}
+
+
+}
+
+
+const bool Board::is_move_possible(Field start, Field destination)
+{
+	if(is_any_capture_mandatory())
+	{
+		
+		if(is_this_move_on_possible_captures(start,destination))
+		{
+			delete_captured_pawn(start,destination);
+			return true;	// THERE IS A CAPTURE!!!!
+		}else
+		{
+			std::cout<<"THERE IS CAPTURE MANDATORY AND YOU HAVE TO DO IT!!!";
+			return false;
+		}
+	}else if(is_any_move_possible())
+	{
+		if(is_this_move_on_possible_moves(start,destination))
+		{
+			return true;	
+		}else
+		{
+			std::cout<<"You cant do this move!!!!!"<<std::endl;;
+			return false;
+		}
+	}
+	return false;
 }
 
 void Board::display()
