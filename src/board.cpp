@@ -124,12 +124,62 @@ possible_moves.clear(); //clear last turn vector
 		}
 	}
 
-//TODO: add all possible moves to possible_moves vector
+//TODO: add all possible moves to possible_moves vector/////////////
 
+for(int i=0;i<possible_moves.size();i++)
+	{
 
+			if(possible_moves[i][0].get_x()-1 >= 0  && possible_moves[i][0].get_y() -1 >=0 ) // If we are not going out of array
+			{
+				if(fields[possible_moves[i][0].get_x()-1][possible_moves[i][0].get_y()-1] == ' ' )//left top
+				{
+					Field f1(possible_moves[i][0].get_x()-1,possible_moves[i][0].get_y()-1); // left top field
+					if(is_move_forward(possible_moves[i][0],f1)) // IS MOVE FORWARD!!!
+					{
+						possible_moves[i].emplace_back(f1);
+					}
+				}	
+			}
+			
+			if(possible_moves[i][0].get_x()+1 <= 7 && possible_moves[i][0].get_y()-1 >= 0)// If we are not going out of array
+			{
+				if(fields[possible_moves[i][0].get_x()+1][possible_moves[i][0].get_y()-1] == ' ' )//left bottom
+				{
+					Field f1(possible_moves[i][0].get_x()+1,possible_moves[i][0].get_y()-1); // left bottom field
+					if(is_move_forward(possible_moves[i][0],f1)) // IS MOVE FORWARD!!!
+					{
+						possible_moves[i].emplace_back(f1);
+					}
+				}
+			}
+			if(possible_moves[i][0].get_x()-1 >= 0 && possible_moves[i][0].get_y()+1 <= 7)// If we are not going out of array
+			{
+				if(fields[possible_moves[i][0].get_x()-1][possible_moves[i][0].get_y()+1] == ' ' )//right top
+				{
+					Field f1(possible_moves[i][0].get_x()-1,possible_moves[i][0].get_y()+1); // right top field
+					if(is_move_forward(possible_moves[i][0],f1)) // IS MOVE FORWARD!!!
+					{
+						possible_moves[i].emplace_back(f1);
+					}
+				}	
+			}
+			if(possible_moves[i][0].get_x()+1 <= 7 && possible_moves[i][0].get_y()+1 <= 7)// If we are not going out of array
+			{
+				if(fields[possible_moves[i][0].get_x()+1][possible_moves[i][0].get_y()+1] == ' ' )//right bottom
+				{
+					Field f1(possible_moves[i][0].get_x()+1,possible_moves[i][0].get_y()+1); // right bottom field
+					if(is_move_forward(possible_moves[i][0],f1)) // IS MOVE FORWARD!!!
+					{
+						possible_moves[i].emplace_back(f1);
+					}
+				}
+			}
+			
+	}
 
+///////////////////////////////////////////////////////////////////
 
-
+	std::cout<<"WYSWIETLAM MOZLIWOSCI!!!"<<std::endl;
 // print
 for(int i=0;i<possible_moves.size();i++)
 	{
@@ -206,9 +256,9 @@ void Board::update_possible_captures()
 	}
 
 
-
+/*
 	std::cout<<"WYSWIETLAM MOZLIWOSCI!!!"<<std::endl;
-
+	
 	for(int i=0;i<possible_captures.size();i++)
 	{
 		for(int j=0;j<possible_captures[i].size();j++)
@@ -217,7 +267,7 @@ void Board::update_possible_captures()
 		}
 		std::cout<<std::endl;
 	}
-
+*/
 }
 
 const bool Board::is_any_capture_mandatory()
@@ -258,6 +308,7 @@ const bool Board::is_move_forward(Field start, Field destination)
 
 const bool Board::is_move_possible(Field start, Field destination)
 {
+	/*
 	if(turn == fields[start.get_x()][start.get_y()]) // IF YOUR PAWN CHOOSEN
 	{
 		if(is_move_forward(start,destination))
@@ -274,6 +325,8 @@ const bool Board::is_move_possible(Field start, Field destination)
 		return false;
 	}
 	return false;
+	*/
+	return true;
 }
 
 void Board::display()
