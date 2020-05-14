@@ -55,15 +55,17 @@ Board::Board()
 			fields[i][j]=f1;
 		}
 	}
-	Field f1(0,4,2,'X');
-	fields[0][4]= f1;
+	//Field f1(4,0,2,'X');
+	//fields[4][0]= f1;
 
-	Field f3(5,1,2,'X');
-	fields[5][1]= f3;
+	//Field f3(1,5,2,'X');
+	//fields[1][5]= f3;
+	//Field f3(6,4,2,'X');
+	//fields[6][4]= f3;
 				//fields[i][j]=' ';
 				//fields[i][j]=f1;
-	Field f2(6,6,2,'O');
-	fields[6][6]= f2;
+	Field f2(1,7,3,'O');
+	fields[1][7]= f2;
 
 	turn ='O';
 }
@@ -268,7 +270,25 @@ for(int i=0;i<possible_moves.size();i++)
 			}
 		}else if(possible_moves[i][0].get_type() == 3) // When its a KING
 		{
+			// LEFT TOP!!!!
+			int k=1;
+			while(possible_moves[i][0].get_x()-k >= 0  && possible_moves[i][0].get_y() -k >=0  ) // If we are not going out of array
+			{
+				if(fields[possible_moves[i][0].get_x()-k][possible_moves[i][0].get_y()-k].get_sign() == ' ' )//left top
+				{
+					Field f1(possible_moves[i][0].get_x()-k,possible_moves[i][0].get_y()-k,1,' '); // left top field
+					possible_moves[i].emplace_back(f1);
+				}else
+				{
+					break;
+				}
+				k++;
+			}
 
+			// TODO: ALL DIRECTIONS!!!!!!////////////////////////////////////////////////////////////////////////
+			/////// LEFT BOTTOM	
+			////// RIGHT TOP
+			/////// RIGHT BOTTOM
 		}	
 	}
 
@@ -354,64 +374,109 @@ void Board::update_possible_captures()
 					}
 				}
 			}
-		}else if(possible_captures[i][0].get_type() == 3) // When its a KING
+		}
+		/////////////////////////////////////////////////////TODO: when 2 X in row !!
+		else if(possible_captures[i][0].get_type() == 3) // When its a KING
 		{
 			std::cout<<"THERE IS A KING!"<<std::endl;
 			////////LEFT TOP
 			int k = 2;
-			//while(possible_captures[i][0].get_x()-k >= 0  && possible_captures[i][0].get_y() -k >=0 ) // If we are not going out of array
 			while(possible_captures[i][0].get_x()-k  >= 0  && possible_captures[i][0].get_y() -k >= 0 ) // If we are not going out of array
 			{
-				if(fields[possible_captures[i][0].get_x()-k+1][possible_captures[i][0].get_y()-k+1].get_sign() == next_turn() )//left top
+				if(fields[possible_captures[i][0].get_x()-k+1][possible_captures[i][0].get_y()-k+1].get_sign() == next_turn() )//left top == next turn
 				{
-					if(fields[possible_captures[i][0].get_x()-k][possible_captures[i][0].get_y()-k].get_sign() == ' ')				
+					if(fields[possible_captures[i][0].get_x()-k][possible_captures[i][0].get_y()-k].get_sign() == ' ')	// next to left top is free			
 					{
-						possible_captures[i].emplace_back(possible_captures[i][0].get_x()-k,possible_captures[i][0].get_y()-k);
-					}
-				}
-				k++;
-			}
-			/////// RIGHT TOP
-			k = 2;
-			while(possible_captures[i][0].get_x()+k <= 7 && possible_captures[i][0].get_y()-k >= 0)// If we are not going out of array
-			{
-				if(fields[possible_captures[i][0].get_x()+k-1][possible_captures[i][0].get_y()-k+1].get_sign() == next_turn() )//left bottom
-				{
-					if(fields[possible_captures[i][0].get_x()+k][possible_captures[i][0].get_y()-k].get_sign() == ' ')				
-					{
-						possible_captures[i].emplace_back(possible_captures[i][0].get_x()+k,possible_captures[i][0].get_y()-k);
-					}
-				}
-				k++;
-			}
-			////// LEFT BOTTOM
-			k = 2;
-			while(possible_captures[i][0].get_x()-k >= 0 && possible_captures[i][0].get_y()+k <= 7)// If we are not going out of array
-			{
-				if(fields[possible_captures[i][0].get_x()-k+1][possible_captures[i][0].get_y()+k-1].get_sign() == next_turn() )//right top
-				{
-					
-					if(fields[possible_captures[i][0].get_x()-k][possible_captures[i][0].get_y()+k].get_sign() == ' ')				
-					{
-						possible_captures[i].emplace_back(possible_captures[i][0].get_x()-k,possible_captures[i][0].get_y()+k);
-					}
-				}
-				k++;	
-			}
-			/////// RIGHT BOTTOM
-			k = 2;
-			if(possible_captures[i][0].get_x()+k <= 7 && possible_captures[i][0].get_y()+k <= 7)// If we are not going out of array
-			{
-				if(fields[possible_captures[i][0].get_x()+k-1][possible_captures[i][0].get_y()+k-1].get_sign() == next_turn() )//right bottom
-				{
-					if(fields[possible_captures[i][0].get_x()+k][possible_captures[i][0].get_y()+k].get_sign() == ' ')				
-					{
-						possible_captures[i].emplace_back(possible_captures[i][0].get_x()+k,possible_captures[i][0].get_y()+k);
+						if(k==2)
+						{
+							possible_captures[i].emplace_back(possible_captures[i][0].get_x()-k,possible_captures[i][0].get_y()-k);	
+						}else if(k>2)
+						{
+							if(fields[possible_captures[i][0].get_x()-k+2][possible_captures[i][0].get_y()-k+2].get_sign() == ' ') // before to left top is free
+							{
+								possible_captures[i].emplace_back(possible_captures[i][0].get_x()-k,possible_captures[i][0].get_y()-k);
+							}
+						}
+						
+	
 					}
 				}
 				k++;
 			}
 
+			/////// LEFT BOTTOM
+			k = 2;
+			while(possible_captures[i][0].get_x()+k <= 7 && possible_captures[i][0].get_y()-k >= 0)// If we are not going out of array
+			{
+				if(fields[possible_captures[i][0].get_x()+k-1][possible_captures[i][0].get_y()-k+1].get_sign() == next_turn() )//left bottom
+				{
+					if(fields[possible_captures[i][0].get_x()+k][possible_captures[i][0].get_y()-k].get_sign() == ' ') // field i want to jump				
+					{
+						if(k==2)
+						{
+							possible_captures[i].emplace_back(possible_captures[i][0].get_x()+k,possible_captures[i][0].get_y()-k);	
+						}else if(k>2)
+						{
+							if(fields[possible_captures[i][0].get_x()+k-2][possible_captures[i][0].get_y()-k+2].get_sign() == ' ') // before to left bottom is free
+							{
+								possible_captures[i].emplace_back(possible_captures[i][0].get_x()+k,possible_captures[i][0].get_y()-k);
+							}
+						}
+					}
+				}
+				k++;
+			}
+			////// RIGHT TOP
+			k = 2;
+			while(possible_captures[i][0].get_x()-k >= 0 && possible_captures[i][0].get_y()+k <= 7)// If we are not going out of array
+			{
+				if(fields[possible_captures[i][0].get_x()-k+1][possible_captures[i][0].get_y()+k-1].get_sign() == next_turn() )//right top
+				{	
+					if(fields[possible_captures[i][0].get_x()-k][possible_captures[i][0].get_y()+k].get_sign() == ' ')		// field i want to jump		
+					{
+						
+						if(k==2)
+						{
+							possible_captures[i].emplace_back(possible_captures[i][0].get_x()-k,possible_captures[i][0].get_y()+k);
+						}else if(k>2)
+						{
+							if(fields[possible_captures[i][0].get_x()-k+2][possible_captures[i][0].get_y()+k-2].get_sign() == ' ') // before to right top is free
+							{
+								possible_captures[i].emplace_back(possible_captures[i][0].get_x()-k,possible_captures[i][0].get_y()+k);
+							}
+						}
+						
+					}
+				}
+				k++;	
+			}
+			
+
+
+			/////// RIGHT BOTTOM
+			k = 2;
+			while(possible_captures[i][0].get_x()+k <= 7 && possible_captures[i][0].get_y()+k <= 7)// If we are not going out of array
+			{
+				if(fields[possible_captures[i][0].get_x()+k-1][possible_captures[i][0].get_y()+k-1].get_sign() == next_turn() )//right bottom
+				{
+					if(fields[possible_captures[i][0].get_x()+k][possible_captures[i][0].get_y()+k].get_sign() == ' ')		 // field i want to jump				
+					{
+
+						if(k==2)
+						{
+							possible_captures[i].emplace_back(possible_captures[i][0].get_x()+k,possible_captures[i][0].get_y()+k);
+						}else if(k>2)
+						{
+							if(fields[possible_captures[i][0].get_x()+k-2][possible_captures[i][0].get_y()+k-2].get_sign() == ' ') // before to right bottom is free
+							{
+								possible_captures[i].emplace_back(possible_captures[i][0].get_x()+k,possible_captures[i][0].get_y()+k);
+							}
+						}
+					}
+				}
+				k++;
+			}
+			
 
 
 		}
