@@ -8,7 +8,7 @@ Board::Board()
 	{
 		fields[i].resize(BOARD_SIZE);
 	}
-
+/*
 	for(int i=0;i<fields.size();i++)
 	{
 		for(int j=0;j<fields[i].size();j++)
@@ -43,8 +43,8 @@ Board::Board()
 			
 		}
 	}
+*/
 
-/*
 ///////////FOR TESTS!!!
 	for(int i=0;i<fields.size();i++)
 	{
@@ -55,14 +55,17 @@ Board::Board()
 			fields[i][j]=f1;
 		}
 	}
-	Field f1(1,5,2,'X');
-	fields[1][5]= f1;
+	Field f1(0,4,2,'X');
+	fields[0][4]= f1;
+
+	Field f3(5,1,2,'X');
+	fields[5][1]= f3;
 				//fields[i][j]=' ';
 				//fields[i][j]=f1;
 	Field f2(6,6,2,'O');
 	fields[6][6]= f2;
-*/
-	turn ='X';
+
+	turn ='O';
 }
 
 
@@ -168,20 +171,15 @@ void Board::update_kings()
 		{
 			if(fields[i][j].get_sign() == 'X') // if X
 			{
-
-					std::cout<<"FIRST IF FOR 'X";
 				if(fields[i][j].get_x() == 0)
 				{
 					fields[i][j].set_to_king();
-					std::cout<<"KING SET!!!";
 				}
 			}else if(fields[i][j].get_sign() == 'O') // if O
 			{
-									std::cout<<"FIRST IF FOR 'O";
 				if(fields[i][j].get_x() == 7)
 				{
 					fields[i][j].set_to_king();
-					std::cout<<"KING SET!!!";
 				}
 			}
 		}
@@ -217,11 +215,12 @@ void Board::update_possible_moves()
 		}
 	}
 
-//TODO: add all possible moves to possible_moves vector/////////////
+
 
 for(int i=0;i<possible_moves.size();i++)
 	{
-
+		if(possible_moves[i][0].get_type() == 2) // IF NORMAL PAWN
+		{
 			if(possible_moves[i][0].get_x()-1 >= 0  && possible_moves[i][0].get_y() -1 >=0 ) // If we are not going out of array
 			{
 				if(fields[possible_moves[i][0].get_x()-1][possible_moves[i][0].get_y()-1].get_sign() == ' ' )//left top
@@ -267,7 +266,10 @@ for(int i=0;i<possible_moves.size();i++)
 					}
 				}
 			}
-			
+		}else if(possible_moves[i][0].get_type() == 3) // When its a KING
+		{
+
+		}	
 	}
 
 ///////////////////////////////////////////////////////////////////
@@ -309,6 +311,8 @@ void Board::update_possible_captures()
 	for(int i=0;i<possible_captures.size();i++)
 	{
 
+		if(possible_captures[i][0].get_type() == 2) // NORMAL PAWN
+		{
 			if(possible_captures[i][0].get_x()-2 >= 0  && possible_captures[i][0].get_y() -2 >=0 ) // If we are not going out of array
 			{
 				if(fields[possible_captures[i][0].get_x()-1][possible_captures[i][0].get_y()-1].get_sign() == next_turn() )//left top
@@ -350,6 +354,68 @@ void Board::update_possible_captures()
 					}
 				}
 			}
+		}else if(possible_captures[i][0].get_type() == 3) // When its a KING
+		{
+			std::cout<<"THERE IS A KING!"<<std::endl;
+			////////LEFT TOP
+			int k = 2;
+			//while(possible_captures[i][0].get_x()-k >= 0  && possible_captures[i][0].get_y() -k >=0 ) // If we are not going out of array
+			while(possible_captures[i][0].get_x()-k  >= 0  && possible_captures[i][0].get_y() -k >= 0 ) // If we are not going out of array
+			{
+				if(fields[possible_captures[i][0].get_x()-k+1][possible_captures[i][0].get_y()-k+1].get_sign() == next_turn() )//left top
+				{
+					if(fields[possible_captures[i][0].get_x()-k][possible_captures[i][0].get_y()-k].get_sign() == ' ')				
+					{
+						possible_captures[i].emplace_back(possible_captures[i][0].get_x()-k,possible_captures[i][0].get_y()-k);
+					}
+				}
+				k++;
+			}
+			/////// RIGHT TOP
+			k = 2;
+			while(possible_captures[i][0].get_x()+k <= 7 && possible_captures[i][0].get_y()-k >= 0)// If we are not going out of array
+			{
+				if(fields[possible_captures[i][0].get_x()+k-1][possible_captures[i][0].get_y()-k+1].get_sign() == next_turn() )//left bottom
+				{
+					if(fields[possible_captures[i][0].get_x()+k][possible_captures[i][0].get_y()-k].get_sign() == ' ')				
+					{
+						possible_captures[i].emplace_back(possible_captures[i][0].get_x()+k,possible_captures[i][0].get_y()-k);
+					}
+				}
+				k++;
+			}
+			////// LEFT BOTTOM
+			k = 2;
+			while(possible_captures[i][0].get_x()-k >= 0 && possible_captures[i][0].get_y()+k <= 7)// If we are not going out of array
+			{
+				if(fields[possible_captures[i][0].get_x()-k+1][possible_captures[i][0].get_y()+k-1].get_sign() == next_turn() )//right top
+				{
+					
+					if(fields[possible_captures[i][0].get_x()-k][possible_captures[i][0].get_y()+k].get_sign() == ' ')				
+					{
+						possible_captures[i].emplace_back(possible_captures[i][0].get_x()-k,possible_captures[i][0].get_y()+k);
+					}
+				}
+				k++;	
+			}
+			/////// RIGHT BOTTOM
+			k = 2;
+			if(possible_captures[i][0].get_x()+k <= 7 && possible_captures[i][0].get_y()+k <= 7)// If we are not going out of array
+			{
+				if(fields[possible_captures[i][0].get_x()+k-1][possible_captures[i][0].get_y()+k-1].get_sign() == next_turn() )//right bottom
+				{
+					if(fields[possible_captures[i][0].get_x()+k][possible_captures[i][0].get_y()+k].get_sign() == ' ')				
+					{
+						possible_captures[i].emplace_back(possible_captures[i][0].get_x()+k,possible_captures[i][0].get_y()+k);
+					}
+				}
+				k++;
+			}
+
+
+
+		}
+
 	}
 
 
