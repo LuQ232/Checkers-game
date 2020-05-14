@@ -8,43 +8,38 @@ Board::Board()
 	{
 		fields[i].resize(BOARD_SIZE);
 	}
-/*
+
 	for(int i=0;i<fields.size();i++)
 	{
 		for(int j=0;j<fields[i].size();j++)
 		{
 			if(i<3 && i%2==0 && j%2==0)
 			{
-				//fields[i][j]='O';
 				Field f1(i,j,2,'O');
 				fields[i][j]=f1;
 			}else if(i<3 && i%2==1 && j%2==1)
 			{
 				Field f1(i,j,2,'O');
-				//fields[i][j]='O';
 				fields[i][j]=f1;	
 			}else if(i>4 && i%2==1 && j%2==1)
 			{
 				Field f1(i,j,2,'X');
-				//fields[i][j]='X';
 				fields[i][j]=f1;	
 			}else if(i>4 && i%2==0 && j%2==0)
 			{
 				Field f1(i,j,2,'X');
-				//fields[i][j]='X';
 				fields[i][j]=f1;
 			}else
 			{
 				Field f1(i,j,1,' ');
-				//fields[i][j]=' ';
 				fields[i][j]=f1;
 			}
 			
 			
 		}
 	}
-*/
 
+/*
 ///////////FOR TESTS!!!
 	for(int i=0;i<fields.size();i++)
 	{
@@ -58,16 +53,16 @@ Board::Board()
 	//Field f1(4,0,2,'X');
 	//fields[4][0]= f1;
 
-	//Field f3(1,5,2,'X');
-	//fields[1][5]= f3;
-	//Field f3(6,4,2,'X');
-	//fields[6][4]= f3;
+	Field f1(5,5,2,'X');
+	fields[5][5]= f1;
+	Field f3(6,6,2,'X');
+	fields[6][6]= f3;
 				//fields[i][j]=' ';
 				//fields[i][j]=f1;
-	Field f2(1,7,3,'O');
-	fields[1][7]= f2;
-
-	turn ='O';
+	Field f2(0,0,3,'O');
+	fields[0][0]= f2;
+*/
+	turn ='X';
 }
 
 
@@ -165,6 +160,20 @@ void Board::display_data()
 		}
 	}
 }
+
+void Board::display_possible_moves()
+{
+	for(int i=0;i<possible_moves.size();i++)
+	{
+		for(int j=0;j<possible_moves[i].size();j++)
+		{
+			std::cout<<possible_moves[i][j];
+		}
+		std::cout<<std::endl;
+	}
+}
+
+
 void Board::update_kings()
 {
 	for(int i=0;i<fields.size();i++)
@@ -199,7 +208,6 @@ void Board::update_possible_moves()
 		{
 			if(fields[i][j].get_sign()==turn)
 			{
-				//std::cout<<"Point->"<<Field(i+1,j+1)<<std::endl;
 				possible_moves[h].emplace_back(i,j,fields[i][j].get_type(),fields[i][j].get_sign());
 				h++;
 			}
@@ -285,27 +293,53 @@ for(int i=0;i<possible_moves.size();i++)
 				k++;
 			}
 
-			// TODO: ALL DIRECTIONS!!!!!!////////////////////////////////////////////////////////////////////////
 			/////// LEFT BOTTOM	
+			k=1;
+			while(possible_moves[i][0].get_x()+k <= 7 && possible_moves[i][0].get_y()-k >= 0)// If we are not going out of array
+			{
+				if(fields[possible_moves[i][0].get_x()+k][possible_moves[i][0].get_y()-k].get_sign() == ' ' )//left bottom
+				{
+					Field f1(possible_moves[i][0].get_x()+k,possible_moves[i][0].get_y()-k,1,' '); // left bottom field
+					possible_moves[i].emplace_back(f1);
+				}else
+				{
+					break;
+				}
+				k++;
+			}
+
 			////// RIGHT TOP
+			k=1;
+			while(possible_moves[i][0].get_x()-k >= 0 && possible_moves[i][0].get_y()+1 <= 7)// If we are not going out of array
+			{
+				if(fields[possible_moves[i][0].get_x()-k][possible_moves[i][0].get_y()+k].get_sign() == ' ' )//right top
+				{
+					Field f1(possible_moves[i][0].get_x()-k,possible_moves[i][0].get_y()+k,1,' '); // right top field
+					possible_moves[i].emplace_back(f1);
+				}else
+				{
+					break;
+				}
+				k++;
+			}
+
 			/////// RIGHT BOTTOM
+			k=1;
+			while(possible_moves[i][0].get_x()+k <= 7 && possible_moves[i][0].get_y()+k <= 7)// If we are not going out of array
+			{
+				if(fields[possible_moves[i][0].get_x()+k][possible_moves[i][0].get_y()+k].get_sign() == ' ' )//right bottom
+				{
+					Field f1(possible_moves[i][0].get_x()+k,possible_moves[i][0].get_y()+k,1,' '); // right bottom field
+					possible_moves[i].emplace_back(f1);
+				}else
+				{
+					break;
+				}
+				k++;
+			}
+
 		}	
 	}
-
-///////////////////////////////////////////////////////////////////
-
-//	std::cout<<"WYSWIETLAM MOZLIWOSCI!!!"<<std::endl;
-// print
-	//std::cout<<"Ilosc pionkow: "<<possible_moves.size()<<std::endl;
-for(int i=0;i<possible_moves.size();i++)
-	{
-		for(int j=0;j<possible_moves[i].size();j++)
-		{
-			std::cout<<possible_moves[i][j];
-		}
-		std::cout<<std::endl;
-	}
-
 }
 
 
@@ -321,7 +355,6 @@ void Board::update_possible_captures()
 		{
 			if(fields[i][j].get_sign()==turn)
 			{
-				//std::cout<<"Point->"<<Field(i+1,j+1)<<std::endl;
 				possible_captures[h].emplace_back(i,j,fields[i][j].get_type(),fields[i][j].get_sign());
 				h++;
 			}
@@ -375,10 +408,10 @@ void Board::update_possible_captures()
 				}
 			}
 		}
-		/////////////////////////////////////////////////////TODO: when 2 X in row !!
 		else if(possible_captures[i][0].get_type() == 3) // When its a KING
 		{
 			std::cout<<"THERE IS A KING!"<<std::endl;
+
 			////////LEFT TOP
 			int k = 2;
 			while(possible_captures[i][0].get_x()-k  >= 0  && possible_captures[i][0].get_y() -k >= 0 ) // If we are not going out of array
@@ -426,6 +459,7 @@ void Board::update_possible_captures()
 				}
 				k++;
 			}
+
 			////// RIGHT TOP
 			k = 2;
 			while(possible_captures[i][0].get_x()-k >= 0 && possible_captures[i][0].get_y()+k <= 7)// If we are not going out of array
@@ -451,8 +485,6 @@ void Board::update_possible_captures()
 				k++;	
 			}
 			
-
-
 			/////// RIGHT BOTTOM
 			k = 2;
 			while(possible_captures[i][0].get_x()+k <= 7 && possible_captures[i][0].get_y()+k <= 7)// If we are not going out of array
@@ -482,20 +514,6 @@ void Board::update_possible_captures()
 		}
 
 	}
-
-
-/*
-	std::cout<<"WYSWIETLAM MOZLIWOSCI!!!"<<std::endl;
-	
-	for(int i=0;i<possible_captures.size();i++)
-	{
-		for(int j=0;j<possible_captures[i].size();j++)
-		{
-			std::cout<<possible_captures[i][j];
-		}
-		std::cout<<std::endl;
-	}
-*/
 }
 
 
@@ -573,20 +591,16 @@ void Board::delete_captured_pawn(Field start, Field destination)
 	{
 		Field f1(destination.get_x()+1,destination.get_y()+1,1,' ');
 		fields[destination.get_x()+1][destination.get_y()+1]=f1;
-		//fields[destination.get_x()+1][destination.get_y()+1].set_2(1,' ');// = ' ';
 	}else if(start.get_x()>destination.get_x() && start.get_y()<destination.get_y()) // capture was in RIGHT TOP direction
 	{
-		//fields[destination.get_x()+1][destination.get_y()-1].set_2(1,' ');// = ' ';
 		Field f1(destination.get_x()+1,destination.get_y()-1,1,' ');
 		fields[destination.get_x()+1][destination.get_y()-1]=f1;
 	}else if(start.get_x()<destination.get_x() && start.get_y()>destination.get_y()) // capture was in LEFT BOTTOM direction
 	{
-		//fields[destination.get_x()-1][destination.get_y()+1].set_2(1,' ');// = ' ';
 		Field f1(destination.get_x()-1,destination.get_y()+1,1,' ');
 		fields[destination.get_x()-1][destination.get_y()+1]=f1;
 	}else if(start.get_x()<destination.get_x() && start.get_y()<destination.get_y()) // capture was in RIGHT BOTTOM direction
 	{
-		//fields[destination.get_x()-1][destination.get_y()-1].set_2(1,' ');// = ' ';
 		Field f1(destination.get_x()-1,destination.get_y()-1,1,' ');
 		fields[destination.get_x()-1][destination.get_y()-1]=f1;
 	}else
@@ -628,9 +642,9 @@ const bool Board::is_move_possible(Field start, Field destination)
 
 void Board::move()
 {
-	//print_possible_moves();
 	update_possible_captures();
 	update_possible_moves();
+	display_possible_moves();
 	//std::cout<<"NUMBER OF PAWNS->"<<number_of_actual_turn_pawns()<<std::endl;
 	Field which;
 	Field where;
@@ -704,6 +718,7 @@ void Board::move()
 
 
 }
+
 
 
 
