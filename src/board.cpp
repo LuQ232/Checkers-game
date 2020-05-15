@@ -174,6 +174,11 @@ void Board::display_possible_moves()
 }
 
 
+void Board::reset_capture_data()
+{
+	was_capture = false;
+}
+
 void Board::update_kings()
 {
 	for(int i=0;i<fields.size();i++)
@@ -195,6 +200,19 @@ void Board::update_kings()
 			}
 		}
 	}
+}
+
+
+const bool Board::is_there_capture_for_pawn(Field start)
+{
+	for(int i=0;i<possible_captures.size();i++)
+	{
+		if(start.get_x() == possible_captures[i][0].get_x() && start.get_y() == possible_captures[i][0].get_y())
+				{
+					return true;
+				}
+	}
+	return false;
 }
 
 void Board::update_possible_moves()
@@ -342,6 +360,20 @@ for(int i=0;i<possible_moves.size();i++)
 	}
 }
 
+
+
+
+void Board::update_possible_moves(Field start)
+{
+	possible_moves.clear(); //clear last turn vector
+	possible_moves.resize(1);
+	possible_moves[0].emplace_back(start.get_x(),start.get_y(),start.get_type(),start.get_sign());
+	// Adding possible captures to possible moves
+		for(int j=1;j<possible_captures[0].size();j++)
+		{
+				possible_moves[0].emplace_back(possible_captures[0][j]);
+		}
+}
 
 
 void Board::update_possible_captures()
@@ -517,6 +549,62 @@ void Board::update_possible_captures()
 }
 
 
+void Board::update_possible_captures(Field start)
+{
+	int h=0;
+	possible_captures.clear(); //clear last turn vector
+	possible_captures.resize(1);
+	possible_captures[0].emplace_back(start.get_x(),start.get_y(),start.get_type(),start.get_sign());
+	
+
+	if(possible_captures[0][0].get_type() == 2) // NORMAL PAWN
+		{
+			if(possible_captures[0][0].get_x()-2 >= 0  && possible_captures[0][0].get_y() -2 >=0 ) // If we are not going out of array
+			{
+				if(fields[possible_captures[0][0].get_x()-1][possible_captures[0][0].get_y()-1].get_sign() == next_turn() )//left top
+				{
+					if(fields[possible_captures[0][0].get_x()-2][possible_captures[0][0].get_y()-2].get_sign() == ' ')				
+					{
+						possible_captures[0].emplace_back(possible_captures[0][0].get_x()-2,possible_captures[0][0].get_y()-2);
+					}
+				}	
+			}
+			if(possible_captures[0][0].get_x()+2 <= 7 && possible_captures[0][0].get_y()-2 >= 0)// If we are not going out of array
+			{
+				if(fields[possible_captures[0][0].get_x()+1][possible_captures[0][0].get_y()-1].get_sign() == next_turn() )//left bottom
+				{
+					if(fields[possible_captures[0][0].get_x()+2][possible_captures[0][0].get_y()-2].get_sign() == ' ')				
+					{
+						possible_captures[0].emplace_back(possible_captures[0][0].get_x()+2,possible_captures[0][0].get_y()-2);
+					}
+				}
+			}
+			if(possible_captures[0][0].get_x()-2 >= 0 && possible_captures[0][0].get_y()+2 <= 7)// If we are not going out of array
+			{
+				if(fields[possible_captures[0][0].get_x()-1][possible_captures[0][0].get_y()+1].get_sign() == next_turn() )//right top
+				{
+					
+					if(fields[possible_captures[0][0].get_x()-2][possible_captures[0][0].get_y()+2].get_sign() == ' ')				
+					{
+						possible_captures[0].emplace_back(possible_captures[0][0].get_x()-2,possible_captures[0][0].get_y()+2);
+					}
+				}	
+			}
+			if(possible_captures[0][0].get_x()+2 <= 7 && possible_captures[0][0].get_y()+2 <= 7)// If we are not going out of array
+			{
+				if(fields[possible_captures[0][0].get_x()+1][possible_captures[0][0].get_y()+1].get_sign() == next_turn() )//right bottom
+				{
+					if(fields[possible_captures[0][0].get_x()+2][possible_captures[0][0].get_y()+2].get_sign() == ' ')				
+					{
+						possible_captures[0].emplace_back(possible_captures[0][0].get_x()+2,possible_captures[0][0].get_y()+2);
+					}
+				}
+			}
+		}
+
+}
+
+
 const bool Board::is_any_capture_mandatory()
 {
 	for(int i=0;i<possible_captures.size();i++)
@@ -620,6 +708,28 @@ const bool Board::is_move_possible(Field start, Field destination)
 		if(is_this_move_on_possible_captures(start,destination))
 		{
 			delete_captured_pawn(start,destination);
+			//////////////////TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			/*
+			was_capture = true;
+			do
+			{
+				//UPDATE_possible_captures_after_capture(field);
+				//UPDATE_possible_moves_after_capture(field) // ta funkcja bedzie tylko bicia wrzucac do siebie i tyle
+				update_possible_captures(destination);
+				update_possible_moves(destination);
+				display_possible_moves();
+				if(is_any_capture_mandatory())
+				{
+					move_after_capture();
+				}else
+				{
+					was_capture =false;
+				}
+				//
+				//
+
+			}while(was_capture == false);
+			*/
 			return true;	// THERE IS A CAPTURE!!!!
 		}else
 		{
@@ -719,6 +829,91 @@ void Board::move()
 
 }
 
+
+void Board::move_after_capture()
+{
+	//update_possible_captures();
+	//update_possible_moves();
+	display_possible_moves();
+	//std::cout<<"NUMBER OF PAWNS->"<<number_of_actual_turn_pawns()<<std::endl;
+	Field which;
+	Field where;
+	int which_i,which_j,where_i,where_j;
+	
+	if(is_any_capture_mandatory())
+	{
+		std::cout<<"THERE IS AT LEAST 1 CAPTURE MANDATORY!"<<std::endl;
+	}
+	
+	do
+	{
+	std::cout<<"Which pawn to move? Row:";
+	std::cin>>which_i;
+	while (std::cin.fail()||(which_i<1)||(which_i>8))
+	{
+		std::cout << "This value is incorrect. Try again: " << std::endl;
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
+		std::cin>>which_i;
+	}
+	std::cout<<" Col:";
+	std::cin>>which_j;
+	while (std::cin.fail()||(which_j<1)||(which_j>8))
+	{
+		std::cout << "This value is incorrect. Try again: " << std::endl;
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
+		std::cin>>which_j;
+	}
+	std::cout<<std::endl;
+//////////////////////////////////////////////////////////////////////
+	std::cout<<"Where move chosen pawn? Row:";
+	std::cin>>where_i;
+	while (std::cin.fail()||(where_i<1)||(where_i>8))
+	{
+		std::cout << "This value is incorrect. Try again: " << std::endl;
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
+		std::cin>>where_i;
+	}
+	std::cout<<" Col:";
+	std::cin>>where_j;
+	while (std::cin.fail()||(where_j<1)||(where_j>8))
+	{
+		std::cout << "This value is incorrect. Try again: " << std::endl;
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
+		std::cin>>where_j;
+	}
+
+	which.set(which_i-1,which_j-1);
+	where.set(where_i-1,where_j-1);
+	std::cout<<std::endl;
+	}while(!is_move_possible(which,where));
+
+	
+
+	if(is_move_possible(which,where))
+	{
+		std::cout<<std::endl<<"Move is possible"<<std::endl;
+		Field new_place_for_pawn(where.get_x(),where.get_y(),fields[which.get_x()][which.get_y()].get_type(),fields[which.get_x()][which.get_y()].get_sign());
+		fields[where.get_x()][where.get_y()]=new_place_for_pawn;
+
+		Field tmp(which.get_x(),which.get_y(),1,' ');
+		fields[which.get_x()][which.get_y()]=tmp;
+	}
+
+////////////////////////////DOIING MOVE!/////////////////////////////
+	//
+
+
+}
+
+
+const bool Board::was_capture_in_this_round()
+{
+	return was_capture;
+}
 
 
 
