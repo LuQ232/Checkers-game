@@ -11,7 +11,6 @@ int main (){
 	//board.display_data();
 	board.display();
 	board.move();
-	//if (!board.was_capture_in_this_round())
 	board.change_turn();
 	
 	}

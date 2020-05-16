@@ -30,9 +30,8 @@ class Board{
 
 	void display_data();
 	void display_possible_moves();
-
+	void display_possible_captures();
 	void move();
-	void move_after_capture();
 
 	void update_kings();
 	void update_possible_captures();

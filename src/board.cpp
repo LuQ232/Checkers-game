@@ -8,24 +8,24 @@ Board::Board()
 	{
 		fields[i].resize(BOARD_SIZE);
 	}
-
+/*
 	for(int i=0;i<fields.size();i++)
 	{
 		for(int j=0;j<fields[i].size();j++)
 		{
-			if(i<3 && i%2==0 && j%2==0)
+			if(i<3 && i%2==0 && j%2==1)
 			{
 				Field f1(i,j,2,'O');
 				fields[i][j]=f1;
-			}else if(i<3 && i%2==1 && j%2==1)
+			}else if(i<3 && i%2==1 && j%2==0)
 			{
 				Field f1(i,j,2,'O');
 				fields[i][j]=f1;	
-			}else if(i>4 && i%2==1 && j%2==1)
+			}else if(i>4 && i%2==1 && j%2==0)
 			{
 				Field f1(i,j,2,'X');
 				fields[i][j]=f1;	
-			}else if(i>4 && i%2==0 && j%2==0)
+			}else if(i>4 && i%2==0 && j%2==1)
 			{
 				Field f1(i,j,2,'X');
 				fields[i][j]=f1;
@@ -38,8 +38,8 @@ Board::Board()
 			
 		}
 	}
+*/
 
-/*
 ///////////FOR TESTS!!!
 	for(int i=0;i<fields.size();i++)
 	{
@@ -50,22 +50,19 @@ Board::Board()
 			fields[i][j]=f1;
 		}
 	}
-	//Field f1(4,0,2,'X');
-	//fields[4][0]= f1;
-
-	Field f1(4,3,2,'X');
-	fields[4][3]= f1;
-	Field f3(3,4,2,'O');
-	fields[3][4]= f3;
-				//fields[i][j]=' ';
-				//fields[i][j]=f1;
-	Field f2(1,6,2,'O');
-	fields[1][6]= f2;
-
-	Field f4(5,2,2,'O');
-	fields[5][2] =f4;
-*/
-	turn ='X';
+	Field f1(2-1,3-1,2,'X');
+	fields[2-1][3-1]= f1;
+	Field f2(2-1,5-1,2,'X');
+	fields[2-1][5-1]= f2;
+	Field f3(4-1,3-1,2,'X');
+	fields[4-1][3-1]= f3;
+	Field f4(6-1,5-1,2,'X');
+	fields[6-1][5-1]= f4;
+	Field f5(4-1,5-1,2,'X');
+	fields[4-1][5-1]= f5;
+	Field f6(7-1,6-1,3,'O');
+	fields[7-1][6-1]= f6;
+	turn ='O';
 }
 
 
@@ -171,10 +168,36 @@ void Board::display_possible_moves()
 		for(int j=0;j<possible_moves[i].size();j++)
 		{
 			std::cout<<possible_moves[i][j];
+			if(j == 0)
+			{
+				std::cout<<" CAN GO TO: ";
+			}
 		}
 		std::cout<<std::endl;
 	}
 }
+
+void Board::display_possible_captures()
+{
+	for(int i=0;i<possible_captures.size();i++)
+	{
+		for(int j=0;j<possible_captures[i].size();j++)
+		{
+			if(possible_captures[i].size()>1)
+				{
+
+					std::cout<<possible_captures[i][j];
+					if(j == 0)
+					{
+						std::cout<<" HAVE TO GO TO: ";
+					}
+				
+				}
+		}
+		std::cout<<std::endl;
+	}
+}
+
 
 
 void Board::reset_capture_data()
@@ -458,11 +481,13 @@ void Board::update_possible_captures()
 						if(k==2)
 						{
 							possible_captures[i].emplace_back(possible_captures[i][0].get_x()-k,possible_captures[i][0].get_y()-k);	
+							break;
 						}else if(k>2)
 						{
 							if(fields[possible_captures[i][0].get_x()-k+2][possible_captures[i][0].get_y()-k+2].get_sign() == ' ') // before to left top is free
 							{
 								possible_captures[i].emplace_back(possible_captures[i][0].get_x()-k,possible_captures[i][0].get_y()-k);
+								break;
 							}
 						}
 						
@@ -483,11 +508,13 @@ void Board::update_possible_captures()
 						if(k==2)
 						{
 							possible_captures[i].emplace_back(possible_captures[i][0].get_x()+k,possible_captures[i][0].get_y()-k);	
+							break;
 						}else if(k>2)
 						{
 							if(fields[possible_captures[i][0].get_x()+k-2][possible_captures[i][0].get_y()-k+2].get_sign() == ' ') // before to left bottom is free
 							{
 								possible_captures[i].emplace_back(possible_captures[i][0].get_x()+k,possible_captures[i][0].get_y()-k);
+								break;
 							}
 						}
 					}
@@ -507,11 +534,13 @@ void Board::update_possible_captures()
 						if(k==2)
 						{
 							possible_captures[i].emplace_back(possible_captures[i][0].get_x()-k,possible_captures[i][0].get_y()+k);
+							break;
 						}else if(k>2)
 						{
 							if(fields[possible_captures[i][0].get_x()-k+2][possible_captures[i][0].get_y()+k-2].get_sign() == ' ') // before to right top is free
 							{
 								possible_captures[i].emplace_back(possible_captures[i][0].get_x()-k,possible_captures[i][0].get_y()+k);
+								break;
 							}
 						}
 						
@@ -532,11 +561,13 @@ void Board::update_possible_captures()
 						if(k==2)
 						{
 							possible_captures[i].emplace_back(possible_captures[i][0].get_x()+k,possible_captures[i][0].get_y()+k);
+							break;
 						}else if(k>2)
 						{
 							if(fields[possible_captures[i][0].get_x()+k-2][possible_captures[i][0].get_y()+k-2].get_sign() == ' ') // before to right bottom is free
 							{
 								possible_captures[i].emplace_back(possible_captures[i][0].get_x()+k,possible_captures[i][0].get_y()+k);
+								break;
 							}
 						}
 					}
@@ -603,6 +634,117 @@ void Board::update_possible_captures(Field start)
 					}
 				}
 			}
+		}else if(possible_captures[0][0].get_type() == 3) // When its a KING
+		{
+			std::cout<<"THERE IS A KING!"<<std::endl;
+
+			////////LEFT TOP
+			int k = 2;
+			while(possible_captures[0][0].get_x()-k  >= 0  && possible_captures[0][0].get_y() -k >= 0 ) // If we are not going out of array
+			{
+				if(fields[possible_captures[0][0].get_x()-k+1][possible_captures[0][0].get_y()-k+1].get_sign() == next_turn() )//left top == next turn
+				{
+					if(fields[possible_captures[0][0].get_x()-k][possible_captures[0][0].get_y()-k].get_sign() == ' ')	// next to left top is free			
+					{
+						if(k==2)
+						{
+							possible_captures[0].emplace_back(possible_captures[0][0].get_x()-k,possible_captures[0][0].get_y()-k);	
+							break;
+						}else if(k>2)
+						{
+							if(fields[possible_captures[0][0].get_x()-k+2][possible_captures[0][0].get_y()-k+2].get_sign() == ' ') // before to left top is free
+							{
+								possible_captures[0].emplace_back(possible_captures[0][0].get_x()-k,possible_captures[0][0].get_y()-k);
+								break;
+							}
+						}
+						
+	
+					}
+				}
+				k++;
+			}
+
+			/////// LEFT BOTTOM
+			k = 2;
+			while(possible_captures[0][0].get_x()+k <= 7 && possible_captures[0][0].get_y()-k >= 0)// If we are not going out of array
+			{
+				if(fields[possible_captures[0][0].get_x()+k-1][possible_captures[0][0].get_y()-k+1].get_sign() == next_turn() )//left bottom
+				{
+					if(fields[possible_captures[0][0].get_x()+k][possible_captures[0][0].get_y()-k].get_sign() == ' ') // field i want to jump				
+					{
+						if(k==2)
+						{
+							possible_captures[0].emplace_back(possible_captures[0][0].get_x()+k,possible_captures[0][0].get_y()-k);	
+							break;
+						}else if(k>2)
+						{
+							if(fields[possible_captures[0][0].get_x()+k-2][possible_captures[0][0].get_y()-k+2].get_sign() == ' ') // before to left bottom is free
+							{
+								possible_captures[0].emplace_back(possible_captures[0][0].get_x()+k,possible_captures[0][0].get_y()-k);
+								break;
+							}
+						}
+					}
+				}
+				k++;
+			}
+
+			////// RIGHT TOP
+			k = 2;
+			while(possible_captures[0][0].get_x()-k >= 0 && possible_captures[0][0].get_y()+k <= 7)// If we are not going out of array
+			{
+				if(fields[possible_captures[0][0].get_x()-k+1][possible_captures[0][0].get_y()+k-1].get_sign() == next_turn() )//right top
+				{	
+					if(fields[possible_captures[0][0].get_x()-k][possible_captures[0][0].get_y()+k].get_sign() == ' ')		// field i want to jump		
+					{
+						
+						if(k==2)
+						{
+							possible_captures[0].emplace_back(possible_captures[0][0].get_x()-k,possible_captures[0][0].get_y()+k);
+							break;
+						}else if(k>2)
+						{
+							if(fields[possible_captures[0][0].get_x()-k+2][possible_captures[0][0].get_y()+k-2].get_sign() == ' ') // before to right top is free
+							{
+								possible_captures[0].emplace_back(possible_captures[0][0].get_x()-k,possible_captures[0][0].get_y()+k);
+								break;
+							}
+						}
+						
+					}
+				}
+				k++;	
+			}
+			
+			/////// RIGHT BOTTOM
+			k = 2;
+			while(possible_captures[0][0].get_x()+k <= 7 && possible_captures[0][0].get_y()+k <= 7)// If we are not going out of array
+			{
+				if(fields[possible_captures[0][0].get_x()+k-1][possible_captures[0][0].get_y()+k-1].get_sign() == next_turn() )//right bottom
+				{
+					if(fields[possible_captures[0][0].get_x()+k][possible_captures[0][0].get_y()+k].get_sign() == ' ')		 // field i want to jump				
+					{
+
+						if(k==2)
+						{
+							possible_captures[0].emplace_back(possible_captures[0][0].get_x()+k,possible_captures[0][0].get_y()+k);
+							break;
+						}else if(k>2)
+						{
+							if(fields[possible_captures[0][0].get_x()+k-2][possible_captures[0][0].get_y()+k-2].get_sign() == ' ') // before to right bottom is free
+							{
+								possible_captures[0].emplace_back(possible_captures[0][0].get_x()+k,possible_captures[0][0].get_y()+k);
+								break;
+							}
+						}
+					}
+				}
+				k++;
+			}
+			
+
+
 		}
 
 }
@@ -704,35 +846,12 @@ void Board::delete_captured_pawn(Field start, Field destination)
 
 const bool Board::is_move_possible(Field start, Field destination)
 {
-	//was_capture = false;
 	if(is_any_capture_mandatory())
 	{
 		
 		if(is_this_move_on_possible_captures(start,destination))
 		{
 			delete_captured_pawn(start,destination);
-			//////////////////TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			/*
-			was_capture = true;
-			do
-			{
-				//UPDATE_possible_captures_after_capture(field);
-				//UPDATE_possible_moves_after_capture(field) // ta funkcja bedzie tylko bicia wrzucac do siebie i tyle
-				update_possible_captures(destination);
-				update_possible_moves(destination);
-				display_possible_moves();
-				if(is_any_capture_mandatory())
-				{
-					move_after_capture();
-				}else
-				{
-					was_capture =false;
-				}
-				//
-				//
-
-			}while(was_capture == false);
-			*/
 			was_capture = true;
 			return true;	// THERE IS A CAPTURE!!!!
 		}else
@@ -773,9 +892,16 @@ void Board::move()
 				{
 					break;
 				}
+				display();
 			}
-		
-			display_possible_moves();
+			
+			if(is_any_capture_mandatory())
+			{	
+				display_possible_captures();
+			}else
+			{
+				display_possible_moves();	
+			}
 			//std::cout<<"NUMBER OF PAWNS->"<<number_of_actual_turn_pawns()<<std::endl;
 			
 			
@@ -811,91 +937,22 @@ void Board::move()
 	while(is_any_capture_mandatory());
 
 }
-/*
 
-void Board::move_after_capture()
-{
-	//update_possible_captures();
-	//update_possible_moves();
-	display_possible_moves();
-	//std::cout<<"NUMBER OF PAWNS->"<<number_of_actual_turn_pawns()<<std::endl;
-	Field which;
-	Field where;
-	int which_i,which_j,where_i,where_j;
-	
-	if(is_any_capture_mandatory())
-	{
-		std::cout<<"THERE IS AT LEAST 1 CAPTURE MANDATORY!"<<std::endl;
-	}
-	
-	do
-	{
-	std::cout<<"Which pawn to move? Row:";
-	std::cin>>which_i;
-	while (std::cin.fail()||(which_i<1)||(which_i>8))
-	{
-		std::cout << "This value is incorrect. Try again: " << std::endl;
-		std::cin.clear();
-		std::cin.ignore(1000, '\n');
-		std::cin>>which_i;
-	}
-	std::cout<<" Col:";
-	std::cin>>which_j;
-	while (std::cin.fail()||(which_j<1)||(which_j>8))
-	{
-		std::cout << "This value is incorrect. Try again: " << std::endl;
-		std::cin.clear();
-		std::cin.ignore(1000, '\n');
-		std::cin>>which_j;
-	}
-	std::cout<<std::endl;
-//////////////////////////////////////////////////////////////////////
-	std::cout<<"Where move chosen pawn? Row:";
-	std::cin>>where_i;
-	while (std::cin.fail()||(where_i<1)||(where_i>8))
-	{
-		std::cout << "This value is incorrect. Try again: " << std::endl;
-		std::cin.clear();
-		std::cin.ignore(1000, '\n');
-		std::cin>>where_i;
-	}
-	std::cout<<" Col:";
-	std::cin>>where_j;
-	while (std::cin.fail()||(where_j<1)||(where_j>8))
-	{
-		std::cout << "This value is incorrect. Try again: " << std::endl;
-		std::cin.clear();
-		std::cin.ignore(1000, '\n');
-		std::cin>>where_j;
-	}
-
-	which.set(which_i-1,which_j-1);
-	where.set(where_i-1,where_j-1);
-	std::cout<<std::endl;
-	}while(!is_move_possible(which,where));
-
-	
-
-	if(is_move_possible(which,where))
-	{
-		std::cout<<std::endl<<"Move is possible"<<std::endl;
-		Field new_place_for_pawn(where.get_x(),where.get_y(),fields[which.get_x()][which.get_y()].get_type(),fields[which.get_x()][which.get_y()].get_sign());
-		fields[where.get_x()][where.get_y()]=new_place_for_pawn;
-
-		Field tmp(which.get_x(),which.get_y(),1,' ');
-		fields[which.get_x()][which.get_y()]=tmp;
-	}
-
-////////////////////////////DOIING MOVE!/////////////////////////////
-	//
-
-
-}
-*/
 Field Board::read_move()
 {
 int data_x;
 int data_y;
+char col;
+	
+	std::cout<<" Col:";
+	std::cin>>col;
+	while (std::cin.fail() && ((col == 'A')||(col == 'B')||(col == 'C')||(col == 'D')||(col == 'E')||(col == 'F')||(col == 'G')||(col == 'H')))
+	{
+		std::cout << "This value is incorrect. Try again: " << std::endl;
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
+		std::cin>>col;
+	}
 	std::cout<<"ROW: ";
 	std::cin>>data_x;
 	while (std::cin.fail()||(data_x<1)||(data_x>8))
@@ -905,17 +962,24 @@ int data_y;
 		std::cin.ignore(1000, '\n');
 		std::cin>>data_x;
 	}
-	std::cout<<" Col:";
-	std::cin>>data_y;
-	while (std::cin.fail()||(data_y<1)||(data_y>8))
-	{
-		std::cout << "This value is incorrect. Try again: " << std::endl;
-		std::cin.clear();
-		std::cin.ignore(1000, '\n');
-		std::cin>>data_y;
-	}
 	std::cout<<std::endl;
-	Field field(data_x-1,data_y-1);
+	if(col == 'A')
+		data_y=0;
+	if(col == 'B')
+		data_y=1;
+	if(col == 'C')
+		data_y=2;
+	if(col == 'D')
+		data_y=3;
+	if(col == 'E')
+		data_y=4;
+	if(col == 'F')
+		data_y=5;
+	if(col == 'G')
+		data_y=6;
+	if(col == 'H')
+		data_y=7;
+	Field field(data_x-1,data_y);
 	return field;
 }
 
@@ -929,7 +993,7 @@ const bool Board::was_capture_in_this_round()
 void Board::display()
 {
 	std::cout<<"ITS-> "<<turn<<" TURN!"<<std::endl;
-	std::cout<<"    1 2 3 4 5 6 7 8"<<std::endl;		
+	std::cout<<"    A B C D E F G H"<<std::endl;		
 	std::cout<<"   +-+-+-+-+-+-+-+-+"<<std::endl;
 	for(int i=0;i<fields.size();i++)
 	{

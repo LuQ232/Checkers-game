@@ -20,9 +20,20 @@ public:
 	const int get_y();
 	const int get_type();
 	const char get_sign();
-	//friend std::ostream& operator<<(std::ostream& os, const Field& f){os<<"|ROW: "<< f.x+1 << " COL:" << f.y+1 << "|";//<<std::endl;
-    friend std::ostream& operator<<(std::ostream& os, const Field& f){os <<"|TYPE: "<<f.type<<"ROW: "<< f.x+1 << " COL:" << f.y+1 << "|";//<<std::endl;
+    friend std::ostream& operator<<(std::ostream& os, const Field& f)
+    {
+    	char col;
+    	if(f.y==0){col = 'A';}if(f.y==1){col = 'B';}if(f.y==2){col = 'C';}if(f.y==3){col = 'D';}if(f.y==4){col = 'E';}if(f.y==5){col = 'F';}if(f.y==6){col = 'G';}if(f.y==7){col = 'H';}
+    os << "|"<<col << f.x+1 <<"|";//<<std::endl;
     return os;}
+	/*
+    friend std::ostream& operator<<(std::ostream& os, const Field& f)
+    {
+    	char col;
+    	if(f.y==0){col = 'A';}if(f.y==1){col = 'B';}if(f.y==2){col = 'C';}if(f.y==3){col = 'D';}if(f.y==4){col = 'E';}if(f.y==5){col = 'F';}if(f.y==6){col = 'G';}if(f.y==7){col = 'H';}
+    os <<"|TYPE: "<<f.type<< " COL:" << col << " ROW: "<< f.x+1 <<"|";//<<std::endl;
+    return os;}
+    */
 };
 
 
