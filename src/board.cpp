@@ -39,29 +39,29 @@ Board::Board()
 		}
 	}
 */
-
+	
 ///////////FOR TESTS!!!
 	for(int i=0;i<fields.size();i++)
 	{
 		for(int j=0;j<fields[i].size();j++)
 		{
 			Field f1(i,j,1,' ');
-				//fields[i][j]=' ';
 			fields[i][j]=f1;
 		}
 	}
-	Field f1(2-1,3-1,2,'X');
-	fields[2-1][3-1]= f1;
-	Field f2(2-1,5-1,2,'X');
-	fields[2-1][5-1]= f2;
-	Field f3(4-1,3-1,2,'X');
-	fields[4-1][3-1]= f3;
-	Field f4(6-1,5-1,2,'X');
-	fields[6-1][5-1]= f4;
-	Field f5(4-1,5-1,2,'X');
-	fields[4-1][5-1]= f5;
-	Field f6(7-1,6-1,3,'O');
-	fields[7-1][6-1]= f6;
+	Field f1(0,0,2,'X');
+	fields[0][0]= f1;
+	Field f2(1,1,2,'O');
+	fields[1][1]= f2;
+	Field f3(0,2,2,'X');
+	fields[0][2]= f3;
+	Field f4(2,0,2,'X');
+	fields[2][0]= f4;
+	Field f5(2,2,2,'X');
+	fields[2][2]= f5;
+	Field f6(3,3,3,'X');
+	fields[3][3]= f6;
+
 	turn ='O';
 }
 
@@ -108,6 +108,21 @@ char Board::next_turn()
 	{
 		return 'O';
 	}
+}
+
+
+const bool Board::is_end_of_game() 
+{
+	if(possible_moves.size() == 0) // no pawns
+	{
+		return true;
+	}else
+	{
+		return false;
+	}
+
+
+	
 }
 
 int Board::number_of_actual_turn_pawns()
@@ -163,24 +178,36 @@ void Board::display_data()
 
 void Board::display_possible_moves()
 {
+	int tmp = 0;
 	for(int i=0;i<possible_moves.size();i++)
 	{
+		tmp = 0;
 		for(int j=0;j<possible_moves[i].size();j++)
 		{
-			std::cout<<possible_moves[i][j];
-			if(j == 0)
+			if(possible_moves[i].size()>1)
 			{
-				std::cout<<" CAN GO TO: ";
+				std::cout<<possible_moves[i][j];
+				if(j == 0)
+				{
+					std::cout<<" CAN GO TO: ";
+				}else
+				{
+					tmp=1;
+				}
 			}
+			
 		}
-		std::cout<<std::endl;
+		if(tmp == 1)
+			std::cout<<std::endl;
 	}
 }
 
 void Board::display_possible_captures()
 {
+	int tmp =0;
 	for(int i=0;i<possible_captures.size();i++)
 	{
+		tmp=0;
 		for(int j=0;j<possible_captures[i].size();j++)
 		{
 			if(possible_captures[i].size()>1)
@@ -190,11 +217,15 @@ void Board::display_possible_captures()
 					if(j == 0)
 					{
 						std::cout<<" HAVE TO GO TO: ";
+					}else
+					{
+						tmp=1;
 					}
 				
 				}
 		}
-		std::cout<<std::endl;
+		if(tmp == 1)
+			std::cout<<std::endl;
 	}
 }
 
@@ -905,10 +936,10 @@ void Board::move()
 			//std::cout<<"NUMBER OF PAWNS->"<<number_of_actual_turn_pawns()<<std::endl;
 			
 			
-			if(is_any_capture_mandatory())
-			{
-				std::cout<<"THERE IS AT LEAST 1 CAPTURE MANDATORY!"<<std::endl;
-			}
+			// if(is_any_capture_mandatory())
+			// {
+			// 	std::cout<<"THERE IS AT LEAST 1 CAPTURE MANDATORY!"<<std::endl;
+			// }
 			
 			do
 			{
@@ -923,12 +954,8 @@ void Board::move()
 					
 			if(is_move_possible(which,where))
 			{
-				std::cout<<std::endl<<"Move is possible"<<std::endl;
-				Field new_place_for_pawn(where.get_x(),where.get_y(),fields[which.get_x()][which.get_y()].get_type(),fields[which.get_x()][which.get_y()].get_sign());
-				fields[where.get_x()][where.get_y()]=new_place_for_pawn;
-		
-				Field tmp(which.get_x(),which.get_y(),1,' ');
-				fields[which.get_x()][which.get_y()]=tmp;
+				//std::cout<<std::endl<<"Move is possible"<<std::endl;
+				pawn_place_change(which,where);
 			}
 
 ////////////////////////////DOIING MOVE!/////////////////////////////
@@ -936,6 +963,16 @@ void Board::move()
 	}
 	while(is_any_capture_mandatory());
 
+}
+
+
+void Board::pawn_place_change(Field which, Field where)
+{
+	Field new_place_for_pawn(where.get_x(),where.get_y(),fields[which.get_x()][which.get_y()].get_type(),fields[which.get_x()][which.get_y()].get_sign());
+	fields[where.get_x()][where.get_y()]=new_place_for_pawn;
+		
+	Field tmp(which.get_x(),which.get_y(),1,' ');
+	fields[which.get_x()][which.get_y()]=tmp;
 }
 
 Field Board::read_move()
@@ -992,6 +1029,7 @@ const bool Board::was_capture_in_this_round()
 
 void Board::display()
 {
+	std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 	std::cout<<"ITS-> "<<turn<<" TURN!"<<std::endl;
 	std::cout<<"    A B C D E F G H"<<std::endl;		
 	std::cout<<"   +-+-+-+-+-+-+-+-+"<<std::endl;

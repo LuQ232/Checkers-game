@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <stdlib.h>
 
 #include "field.h"
 
@@ -25,12 +26,14 @@ class Board{
 	void change_turn();
 	char actual_turn();
 	char next_turn();
+	const  bool is_end_of_game();
 
 	int number_of_actual_turn_pawns();
 
 	void display_data();
 	void display_possible_moves();
 	void display_possible_captures();
+	void pawn_place_change(Field which, Field where);
 	void move();
 
 	void update_kings();
