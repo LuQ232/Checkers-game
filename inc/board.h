@@ -55,7 +55,7 @@ class Board{
 	const bool is_move_possible(Field start, Field destination);
 	const bool is_move_forward(Field start, Field destination);
 
-
+	Field read_move();
 		
 };
 

@@ -53,14 +53,17 @@ Board::Board()
 	//Field f1(4,0,2,'X');
 	//fields[4][0]= f1;
 
-	Field f1(5,5,2,'X');
-	fields[5][5]= f1;
-	Field f3(6,6,2,'X');
-	fields[6][6]= f3;
+	Field f1(4,3,2,'X');
+	fields[4][3]= f1;
+	Field f3(3,4,2,'O');
+	fields[3][4]= f3;
 				//fields[i][j]=' ';
 				//fields[i][j]=f1;
-	Field f2(0,0,3,'O');
-	fields[0][0]= f2;
+	Field f2(1,6,2,'O');
+	fields[1][6]= f2;
+
+	Field f4(5,2,2,'O');
+	fields[5][2] =f4;
 */
 	turn ='X';
 }
@@ -554,7 +557,7 @@ void Board::update_possible_captures(Field start)
 	int h=0;
 	possible_captures.clear(); //clear last turn vector
 	possible_captures.resize(1);
-	possible_captures[0].emplace_back(start.get_x(),start.get_y(),start.get_type(),start.get_sign());
+	possible_captures[0].emplace_back(start.get_x(),start.get_y(),fields[start.get_x()][start.get_y()].get_type(),fields[start.get_x()][start.get_y()].get_sign());
 	
 
 	if(possible_captures[0][0].get_type() == 2) // NORMAL PAWN
@@ -701,7 +704,7 @@ void Board::delete_captured_pawn(Field start, Field destination)
 
 const bool Board::is_move_possible(Field start, Field destination)
 {
-	
+	//was_capture = false;
 	if(is_any_capture_mandatory())
 	{
 		
@@ -730,6 +733,7 @@ const bool Board::is_move_possible(Field start, Field destination)
 
 			}while(was_capture == false);
 			*/
+			was_capture = true;
 			return true;	// THERE IS A CAPTURE!!!!
 		}else
 		{
@@ -752,83 +756,62 @@ const bool Board::is_move_possible(Field start, Field destination)
 
 void Board::move()
 {
-	update_possible_captures();
-	update_possible_moves();
-	display_possible_moves();
-	//std::cout<<"NUMBER OF PAWNS->"<<number_of_actual_turn_pawns()<<std::endl;
-	Field which;
-	Field where;
-	int which_i,which_j,where_i,where_j;
-	
-	if(is_any_capture_mandatory())
-	{
-		std::cout<<"THERE IS AT LEAST 1 CAPTURE MANDATORY!"<<std::endl;
-	}
-	
+			Field which;
+			Field where;
 	do
 	{
-	std::cout<<"Which pawn to move? Row:";
-	std::cin>>which_i;
-	while (std::cin.fail()||(which_i<1)||(which_i>8))
-	{
-		std::cout << "This value is incorrect. Try again: " << std::endl;
-		std::cin.clear();
-		std::cin.ignore(1000, '\n');
-		std::cin>>which_i;
-	}
-	std::cout<<" Col:";
-	std::cin>>which_j;
-	while (std::cin.fail()||(which_j<1)||(which_j>8))
-	{
-		std::cout << "This value is incorrect. Try again: " << std::endl;
-		std::cin.clear();
-		std::cin.ignore(1000, '\n');
-		std::cin>>which_j;
-	}
-	std::cout<<std::endl;
-//////////////////////////////////////////////////////////////////////
-	std::cout<<"Where move chosen pawn? Row:";
-	std::cin>>where_i;
-	while (std::cin.fail()||(where_i<1)||(where_i>8))
-	{
-		std::cout << "This value is incorrect. Try again: " << std::endl;
-		std::cin.clear();
-		std::cin.ignore(1000, '\n');
-		std::cin>>where_i;
-	}
-	std::cout<<" Col:";
-	std::cin>>where_j;
-	while (std::cin.fail()||(where_j<1)||(where_j>8))
-	{
-		std::cout << "This value is incorrect. Try again: " << std::endl;
-		std::cin.clear();
-		std::cin.ignore(1000, '\n');
-		std::cin>>where_j;
-	}
-
-	which.set(which_i-1,which_j-1);
-	where.set(where_i-1,where_j-1);
-	std::cout<<std::endl;
-	}while(!is_move_possible(which,where));
-
-	
-
-	if(is_move_possible(which,where))
-	{
-		std::cout<<std::endl<<"Move is possible"<<std::endl;
-		Field new_place_for_pawn(where.get_x(),where.get_y(),fields[which.get_x()][which.get_y()].get_type(),fields[which.get_x()][which.get_y()].get_sign());
-		fields[where.get_x()][where.get_y()]=new_place_for_pawn;
-
-		Field tmp(which.get_x(),which.get_y(),1,' ');
-		fields[which.get_x()][which.get_y()]=tmp;
-	}
+			
+			if(was_capture == false)
+			{
+				update_possible_captures();
+				update_possible_moves();
+			}else
+			{
+				update_possible_captures(where);
+				update_possible_moves(where);
+				if(!is_any_capture_mandatory())
+				{
+					break;
+				}
+			}
+		
+			display_possible_moves();
+			//std::cout<<"NUMBER OF PAWNS->"<<number_of_actual_turn_pawns()<<std::endl;
+			
+			
+			if(is_any_capture_mandatory())
+			{
+				std::cout<<"THERE IS AT LEAST 1 CAPTURE MANDATORY!"<<std::endl;
+			}
+			
+			do
+			{
+			std::cout<<"Which pawn to move?";
+			which =read_move();
+			std::cout<<std::endl;
+			//////////////////////////////////////////////////////////////////////
+			std::cout<<"Where move chosen pawn?";
+			where =read_move();
+			std::cout<<std::endl;
+			}while(!is_move_possible(which,where));
+					
+			if(is_move_possible(which,where))
+			{
+				std::cout<<std::endl<<"Move is possible"<<std::endl;
+				Field new_place_for_pawn(where.get_x(),where.get_y(),fields[which.get_x()][which.get_y()].get_type(),fields[which.get_x()][which.get_y()].get_sign());
+				fields[where.get_x()][where.get_y()]=new_place_for_pawn;
+		
+				Field tmp(which.get_x(),which.get_y(),1,' ');
+				fields[which.get_x()][which.get_y()]=tmp;
+			}
 
 ////////////////////////////DOIING MOVE!/////////////////////////////
 	//
-
+	}
+	while(is_any_capture_mandatory());
 
 }
-
+/*
 
 void Board::move_after_capture()
 {
@@ -908,7 +891,33 @@ void Board::move_after_capture()
 
 
 }
-
+*/
+Field Board::read_move()
+{
+int data_x;
+int data_y;
+	std::cout<<"ROW: ";
+	std::cin>>data_x;
+	while (std::cin.fail()||(data_x<1)||(data_x>8))
+	{
+		std::cout << "This value is incorrect. Try again: " << std::endl;
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
+		std::cin>>data_x;
+	}
+	std::cout<<" Col:";
+	std::cin>>data_y;
+	while (std::cin.fail()||(data_y<1)||(data_y>8))
+	{
+		std::cout << "This value is incorrect. Try again: " << std::endl;
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
+		std::cin>>data_y;
+	}
+	std::cout<<std::endl;
+	Field field(data_x-1,data_y-1);
+	return field;
+}
 
 const bool Board::was_capture_in_this_round()
 {
