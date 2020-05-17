@@ -8,7 +8,7 @@ Board::Board()
 	{
 		fields[i].resize(BOARD_SIZE);
 	}
-
+/*
 	for(int i=0;i<fields.size();i++)
 	{
 		for(int j=0;j<fields[i].size();j++)
@@ -38,9 +38,10 @@ Board::Board()
 			
 		}
 	}
+*/
 
 /*
-///////////FOR TESTS!!!
+///////////FOR TESTS!!!//////// BLOCK TEST
 	for(int i=0;i<fields.size();i++)
 	{
 		for(int j=0;j<fields[i].size();j++)
@@ -62,7 +63,31 @@ Board::Board()
 	Field f6(3,3,3,'X');
 	fields[3][3]= f6;
 */
-	turn ='X';
+
+	
+///////////FOR TESTS!!!//////// MULTIPLE CAPTURE
+	for(int i=0;i<fields.size();i++)
+	{
+		for(int j=0;j<fields[i].size();j++)
+		{
+			Field f1(i,j,1,' ');
+			fields[i][j]=f1;
+		}
+	}
+	Field f1(5,4,2,'X');
+	fields[5][4]= f1;
+	Field f2(6,5,2,'O');
+	fields[6][5]= f2;
+	Field f3(3,2,2,'X');
+	fields[3][2]= f3;
+	Field f4(1,4,2,'X');
+	fields[1][4]= f4;
+	Field f5(1,2,2,'X');
+	fields[1][2]= f5;
+	// Field f6(3,3,3,'X');
+	// fields[3][3]= f6;
+
+	turn ='O';
 }
 
 
@@ -131,6 +156,10 @@ std::vector<std::vector<Field>> Board::return_vector_of_possible_moves()
 	return possible_moves;
 }
 
+std::vector<std::vector<Field>> Board::return_vector_of_possible_captures()
+{
+	return possible_captures;
+}
 
 int Board::number_of_actual_turn_pawns()
 {
@@ -915,7 +944,8 @@ void Board::move()
 {
 			Field which;
 			Field where;
-
+			Bot bot;
+			Move ruch;
 	do
 	{
 			
@@ -923,47 +953,85 @@ void Board::move()
 			{
 				update_possible_captures();
 				update_possible_moves();
-			}else
+			}else	
 			{
-				update_possible_captures(where);
-				update_possible_moves(where);
+				if(turn == 'X')
+				{
+					update_possible_captures(where);
+					update_possible_moves(where);
+				}else if(turn == 'O')
+				{
+					update_possible_captures(ruch.get_destination());
+					update_possible_moves(ruch.get_destination());
+				}
+				
 				if(!is_any_capture_mandatory())
 				{
 					break;
 				}
-				display();
-			}
-			
-			if(is_any_capture_mandatory())
-			{	
-				display_possible_captures();
-			}else
-			{
-				display_possible_moves();	
+				if(turn == 'X');	
+					display();
 			}
 
-			do
-			{
-			std::cout<<"Which pawn to move?";
-			which =read_move();
-			std::cout<<std::endl;
-			//////////////////////////////////////////////////////////////////////
-			std::cout<<"Where move chosen pawn?";
-			where =read_move();
-			std::cout<<std::endl;
-			}while(!is_move_possible(which,where));
 			
-			if(is_move_possible(which,where))
+			if(turn == 'X')
 			{
-				//std::cout<<std::endl<<"Move is possible"<<std::endl;
-				pawn_place_change(which,where);
+				if(is_any_capture_mandatory())
+				{	
+					display_possible_captures();
+				}else
+				{
+					display_possible_moves();	
+				}
+
+				do
+				{
+				std::cout<<"Which pawn to move?";
+				which =read_move();
+				std::cout<<std::endl;
+				//////////////////////////////////////////////////////////////////////
+				std::cout<<"Where move chosen pawn?";
+				where =read_move();
+				std::cout<<std::endl;
+				}while(!is_move_possible(which,where));
+
+				if(is_move_possible(which,where))
+				{
+					//std::cout<<std::endl<<"Move is possible"<<std::endl;
+					pawn_place_change(which,where);
+				}
+			}else if(turn == 'O')
+			{
+				if(is_any_capture_mandatory())
+				{	
+					display_possible_captures();
+				}else
+				{
+					display_possible_moves();	
+				}
+				// do
+				// {
+				 	ruch = bot.return_move(return_vector_of_possible_moves(),return_vector_of_possible_captures(),is_any_capture_mandatory());
+				 	std::cout<<ruch;
+				// }while(!is_move_possible(ruch.get_start(),ruch.get_destination()));
+
+				if(is_move_possible(ruch.get_start(),ruch.get_destination()))
+				{
+					
+					 pawn_place_change(ruch.get_start(),ruch.get_destination());
+				}
+				// update_possible_captures();
+				// update_possible_moves();
 			}
+			
+			
+			
 
 ////////////////////////////DOIING MOVE!/////////////////////////////
 	//
 	}
 	while(is_any_capture_mandatory());
-	
+
 
 }
 

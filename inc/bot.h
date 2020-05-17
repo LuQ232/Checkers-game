@@ -11,7 +11,8 @@ class Bot{
 
 public:
 
-	Move return_move(std::vector<std::vector<Field>> vector_of_possible_moves);
+	Move return_move(std::vector<std::vector<Field>> vector_of_possible_moves,std::vector<std::vector<Field>> vector_of_possible_captures,bool is_capture_mandatory);
+
 
 };
 

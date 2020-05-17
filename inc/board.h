@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 #include "field.h"
-
+#include "bot.h"
 class Board{
 
 	std::vector<std::vector<Field>> fields;
@@ -29,6 +29,7 @@ class Board{
 	const  bool is_end_of_game();
 
 	std::vector<std::vector<Field>> return_vector_of_possible_moves();
+	std::vector<std::vector<Field>> return_vector_of_possible_captures();
 
 	int number_of_actual_turn_pawns();
 
