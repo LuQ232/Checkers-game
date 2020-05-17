@@ -8,7 +8,7 @@ Board::Board()
 	{
 		fields[i].resize(BOARD_SIZE);
 	}
-/*
+
 	for(int i=0;i<fields.size();i++)
 	{
 		for(int j=0;j<fields[i].size();j++)
@@ -38,8 +38,8 @@ Board::Board()
 			
 		}
 	}
-*/
-	
+
+/*
 ///////////FOR TESTS!!!
 	for(int i=0;i<fields.size();i++)
 	{
@@ -61,8 +61,8 @@ Board::Board()
 	fields[2][2]= f5;
 	Field f6(3,3,3,'X');
 	fields[3][3]= f6;
-
-	turn ='O';
+*/
+	turn ='X';
 }
 
 
@@ -124,6 +124,13 @@ const bool Board::is_end_of_game()
 
 	
 }
+
+
+std::vector<std::vector<Field>> Board::return_vector_of_possible_moves()
+{
+	return possible_moves;
+}
+
 
 int Board::number_of_actual_turn_pawns()
 {
@@ -908,6 +915,7 @@ void Board::move()
 {
 			Field which;
 			Field where;
+
 	do
 	{
 			
@@ -933,14 +941,7 @@ void Board::move()
 			{
 				display_possible_moves();	
 			}
-			//std::cout<<"NUMBER OF PAWNS->"<<number_of_actual_turn_pawns()<<std::endl;
-			
-			
-			// if(is_any_capture_mandatory())
-			// {
-			// 	std::cout<<"THERE IS AT LEAST 1 CAPTURE MANDATORY!"<<std::endl;
-			// }
-			
+
 			do
 			{
 			std::cout<<"Which pawn to move?";
@@ -951,7 +952,7 @@ void Board::move()
 			where =read_move();
 			std::cout<<std::endl;
 			}while(!is_move_possible(which,where));
-					
+			
 			if(is_move_possible(which,where))
 			{
 				//std::cout<<std::endl<<"Move is possible"<<std::endl;
@@ -962,6 +963,7 @@ void Board::move()
 	//
 	}
 	while(is_any_capture_mandatory());
+	
 
 }
 

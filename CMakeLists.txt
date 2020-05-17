@@ -11,6 +11,8 @@ set(SOURCES
     src/board.cpp
     src/field.cpp
     src/main.cpp
+    src/bot.cpp
+    src/move.cpp
 )
 
 # Add an executable with the above sources

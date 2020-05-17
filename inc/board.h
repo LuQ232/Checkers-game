@@ -28,6 +28,8 @@ class Board{
 	char next_turn();
 	const  bool is_end_of_game();
 
+	std::vector<std::vector<Field>> return_vector_of_possible_moves();
+
 	int number_of_actual_turn_pawns();
 
 	void display_data();
