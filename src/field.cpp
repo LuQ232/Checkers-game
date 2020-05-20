@@ -2,6 +2,7 @@
 
 Field::Field()
 {
+	
 }
 Field::Field(int x1, int x2)
 {

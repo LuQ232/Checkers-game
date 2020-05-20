@@ -14,7 +14,6 @@ Move Bot::return_move(std::vector<std::vector<Field>> vector_of_possible_moves,s
 		{ 
 		 	j = rand() % vector_of_possible_moves[i].size();
 		}while(j == 0);
-		 	//std::cout<<"I->"<<i<<" J->"<<j<<std::endl;
 
 		return Move(vector_of_possible_moves[i][0],vector_of_possible_moves[i][j]);
 	}else if (is_capture_mandatory == true){
@@ -26,11 +25,7 @@ Move Bot::return_move(std::vector<std::vector<Field>> vector_of_possible_moves,s
 		{ 
 		 	j = rand() % vector_of_possible_captures[i].size();
 		}while(j == 0);
-		 	//std::cout<<"I->"<<i<<" J->"<<j<<std::endl;
 
 		return Move(vector_of_possible_captures[i][0],vector_of_possible_captures[i][j]);
 	}
-	 
-
-
 }

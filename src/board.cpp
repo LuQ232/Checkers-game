@@ -39,7 +39,6 @@ Board::Board()
 		}
 	}
 
-
 /*
 ///////////FOR TESTS!!!//////// BLOCK TEST
 	for(int i=0;i<fields.size();i++)
@@ -64,7 +63,7 @@ Board::Board()
 	fields[3][3]= f6;
 */
 
-/*	
+/*
 ///////////FOR TESTS!!!//////// MULTIPLE CAPTURE
 	for(int i=0;i<fields.size();i++)
 	{
@@ -74,15 +73,15 @@ Board::Board()
 			fields[i][j]=f1;
 		}
 	}
-	Field f1(5,4,2,'X');
+	Field f1(5,4,2,'O');
 	fields[5][4]= f1;
-	Field f2(6,5,2,'O');
+	Field f2(6,5,3,'X');
 	fields[6][5]= f2;
-	Field f3(3,2,2,'X');
+	Field f3(3,2,2,'O');
 	fields[3][2]= f3;
-	Field f4(1,4,2,'X');
+	Field f4(1,4,2,'O');
 	fields[1][4]= f4;
-	Field f5(1,2,2,'X');
+	Field f5(1,2,2,'O');
 	fields[1][2]= f5;
 	// Field f6(3,3,3,'X');
 	// fields[3][3]= f6;
@@ -94,7 +93,7 @@ Board::Board()
 
 Board::~Board()
 {
-std::cout<<"Board destructed"<<std::endl;
+	std::cout<<"Board destructed"<<std::endl;
 }
 
 void Board::change_turn()
@@ -145,9 +144,6 @@ const bool Board::is_end_of_game()
 	{
 		return false;
 	}
-
-
-	
 }
 
 
@@ -161,7 +157,7 @@ std::vector<std::vector<Field>> Board::return_vector_of_possible_captures()
 	return possible_captures;
 }
 
-int Board::number_of_actual_turn_pawns()
+const int Board::number_of_actual_turn_pawns()
 {
 	int h=0;
 	for(int i=0;i<fields.size();i++)
@@ -265,6 +261,43 @@ void Board::display_possible_captures()
 	}
 }
 
+
+void Board::display_info_about_kings()
+{
+	char col;
+	for(int i=0;i<fields.size();i++)
+	{
+		for(int j=0;j<fields[i].size();j++)
+		{
+			if(fields[i][j].get_type() == 3)
+			{
+				if(j == 0)
+					col ='A';
+				if(j == 1)
+					col ='B';
+				if(j == 2)
+					col ='C';
+				if(j == 3)
+					col ='D';
+				if(j == 4)
+					col ='E';
+				if(j == 5)
+					col ='F';
+				if(j == 6)
+					col ='G';
+				if(j == 7)
+					col ='H';
+				if(fields[i][j].get_sign() == 'X' )
+				{
+					std::cout<<"YOU HAVE A KING ON FIELD: "<<"|"<<col<<i+1<<"|"<<std::endl;
+				}else if(fields[i][j].get_sign() == 'O')
+				{
+					std::cout<<"COMPUTER HAS A KING ON FIELD: "<<"|"<<col<<i+1<<"|"<<std::endl;
+				}
+			}
+		}
+	}
+}
 
 
 void Board::reset_capture_data()
@@ -535,7 +568,8 @@ void Board::update_possible_captures()
 		}
 		else if(possible_captures[i][0].get_type() == 3) // When its a KING
 		{
-			std::cout<<"THERE IS A KING!"<<std::endl;
+			//std::cout<<"YOU HAVE A KING ON FIELD: "<<possible_captures[i][0].get_x()<<" "<<possible_captures[i][0].get_y()<<std::endl;
+
 
 			////////LEFT TOP
 			int k = 2;
@@ -703,7 +737,7 @@ void Board::update_possible_captures(Field start)
 			}
 		}else if(possible_captures[0][0].get_type() == 3) // When its a KING
 		{
-			std::cout<<"THERE IS A KING!"<<std::endl;
+			//std::cout<<"YOU HAVE A KING ON FIELD: "<<possible_captures[0][0].get_x()<<" "<<possible_captures[0][0].get_y()<<std::endl;
 
 			////////LEFT TOP
 			int k = 2;
@@ -923,7 +957,7 @@ const bool Board::is_move_possible(Field start, Field destination)
 			return true;	// THERE IS A CAPTURE!!!!
 		}else
 		{
-			std::cout<<"THERE IS CAPTURE MANDATORY AND YOU HAVE TO DO IT!!!";
+			std::cout<<"THERE IS CAPTURE MANDATORY AND YOU HAVE TO DO IT!!!"<<std::endl;
 			return false;
 		}
 	}else if(is_any_move_possible())
@@ -957,11 +991,8 @@ void Board::move()
 			{
 				if(turn == 'X')
 				{
-					// update_possible_captures(where);
-					// update_possible_moves(where);
-					update_possible_captures(ruch.get_destination());
-					update_possible_moves(ruch.get_destination());
-				
+					update_possible_captures(where);
+					update_possible_moves(where);
 				}else if(turn == 'O')
 				{
 					update_possible_captures(ruch.get_destination());
@@ -972,23 +1003,14 @@ void Board::move()
 				{
 					break;
 				}
-				// if(turn == 'X');	
-				// 	display();
+				if(turn == 'X');	
+					display();
 			}
 
 			
 			if(turn == 'X')
 			{
-
-				ruch = bot.return_move(return_vector_of_possible_moves(),return_vector_of_possible_captures(),is_any_capture_mandatory());
-				 	std::cout<<ruch;
-				// }while(!is_move_possible(ruch.get_start(),ruch.get_destination()));
-
-				if(is_move_possible(ruch.get_start(),ruch.get_destination()))
-				{
-					 pawn_place_change(ruch.get_start(),ruch.get_destination());
-				}
-			/*NORMAL VERSION
+				display_info_about_kings();
 				if(is_any_capture_mandatory())
 				{	
 					display_possible_captures();
@@ -999,43 +1021,32 @@ void Board::move()
 
 				do
 				{
-				std::cout<<"Which pawn to move?";
+				std::cout<<"Which pawn to move?"<<std::endl;
 				which =read_move();
 				std::cout<<std::endl;
 				//////////////////////////////////////////////////////////////////////
-				std::cout<<"Where move chosen pawn?";
+				std::cout<<"Where to move chosen pawn?"<<std::endl;
 				where =read_move();
 				std::cout<<std::endl;
 				}while(!is_move_possible(which,where));
 
 				if(is_move_possible(which,where))
 				{
-					//std::cout<<std::endl<<"Move is possible"<<std::endl;
 					pawn_place_change(which,where);
 				}
-				*/
+				
 			}else if(turn == 'O')
 			{
-				// if(is_any_capture_mandatory())
-				// {	
-				// 	display_possible_captures();
-				// }else
-				// {
-				// 	display_possible_moves();	
-				// }
-				// do
-				// {
-				 	ruch = bot.return_move(return_vector_of_possible_moves(),return_vector_of_possible_captures(),is_any_capture_mandatory());
-				 	std::cout<<ruch;
-				// }while(!is_move_possible(ruch.get_start(),ruch.get_destination()));
+				display_info_about_kings();
+				ruch = bot.return_move(return_vector_of_possible_moves(),return_vector_of_possible_captures(),is_any_capture_mandatory());
+				std::cout<<ruch;
 
 				if(is_move_possible(ruch.get_start(),ruch.get_destination()))
 				{
 					
 					 pawn_place_change(ruch.get_start(),ruch.get_destination());
 				}
-				// update_possible_captures();
-				// update_possible_moves();
+
 			}
 			
 			
@@ -1065,20 +1076,19 @@ int data_x;
 int data_y;
 char col;
 	
-	std::cout<<" Col:";
+	std::cout<<"Give pawn coordinates ->";
 	std::cin>>col;
 	while (std::cin.fail() && ((col == 'A')||(col == 'B')||(col == 'C')||(col == 'D')||(col == 'E')||(col == 'F')||(col == 'G')||(col == 'H')))
 	{
-		std::cout << "This value is incorrect. Try again: " << std::endl;
+		std::cout << "Column value is incorrect. Try again: " << std::endl;
 		std::cin.clear();
 		std::cin.ignore(1000, '\n');
 		std::cin>>col;
 	}
-	std::cout<<"ROW: ";
 	std::cin>>data_x;
 	while (std::cin.fail()||(data_x<1)||(data_x>8))
 	{
-		std::cout << "This value is incorrect. Try again: " << std::endl;
+		std::cout << "Row value is incorrect. Try again: " << std::endl;
 		std::cin.clear();
 		std::cin.ignore(1000, '\n');
 		std::cin>>data_x;
@@ -1100,6 +1110,7 @@ char col;
 		data_y=6;
 	if(col == 'H')
 		data_y=7;
+
 	Field field(data_x-1,data_y);
 	return field;
 }
@@ -1117,6 +1128,7 @@ void Board::display()
 	std::cout<<"ITS-> "<<turn<<" TURN!"<<std::endl;
 	std::cout<<"    A B C D E F G H"<<std::endl;		
 	std::cout<<"   +-+-+-+-+-+-+-+-+"<<std::endl;
+
 	for(int i=0;i<fields.size();i++)
 	{
 		std::cout<<i+1<<"  ";		
