@@ -8,7 +8,7 @@ Board::Board()
 	{
 		fields[i].resize(BOARD_SIZE);
 	}
-/*
+
 	for(int i=0;i<fields.size();i++)
 	{
 		for(int j=0;j<fields[i].size();j++)
@@ -38,7 +38,7 @@ Board::Board()
 			
 		}
 	}
-*/
+
 
 /*
 ///////////FOR TESTS!!!//////// BLOCK TEST
@@ -64,7 +64,7 @@ Board::Board()
 	fields[3][3]= f6;
 */
 
-	
+/*	
 ///////////FOR TESTS!!!//////// MULTIPLE CAPTURE
 	for(int i=0;i<fields.size();i++)
 	{
@@ -86,8 +86,8 @@ Board::Board()
 	fields[1][2]= f5;
 	// Field f6(3,3,3,'X');
 	// fields[3][3]= f6;
-
-	turn ='O';
+*/
+	turn ='X';
 }
 
 
@@ -957,8 +957,11 @@ void Board::move()
 			{
 				if(turn == 'X')
 				{
-					update_possible_captures(where);
-					update_possible_moves(where);
+					// update_possible_captures(where);
+					// update_possible_moves(where);
+					update_possible_captures(ruch.get_destination());
+					update_possible_moves(ruch.get_destination());
+				
 				}else if(turn == 'O')
 				{
 					update_possible_captures(ruch.get_destination());
@@ -969,13 +972,23 @@ void Board::move()
 				{
 					break;
 				}
-				if(turn == 'X');	
-					display();
+				// if(turn == 'X');	
+				// 	display();
 			}
 
 			
 			if(turn == 'X')
 			{
+
+				ruch = bot.return_move(return_vector_of_possible_moves(),return_vector_of_possible_captures(),is_any_capture_mandatory());
+				 	std::cout<<ruch;
+				// }while(!is_move_possible(ruch.get_start(),ruch.get_destination()));
+
+				if(is_move_possible(ruch.get_start(),ruch.get_destination()))
+				{
+					 pawn_place_change(ruch.get_start(),ruch.get_destination());
+				}
+			/*NORMAL VERSION
 				if(is_any_capture_mandatory())
 				{	
 					display_possible_captures();
@@ -1000,15 +1013,16 @@ void Board::move()
 					//std::cout<<std::endl<<"Move is possible"<<std::endl;
 					pawn_place_change(which,where);
 				}
+				*/
 			}else if(turn == 'O')
 			{
-				if(is_any_capture_mandatory())
-				{	
-					display_possible_captures();
-				}else
-				{
-					display_possible_moves();	
-				}
+				// if(is_any_capture_mandatory())
+				// {	
+				// 	display_possible_captures();
+				// }else
+				// {
+				// 	display_possible_moves();	
+				// }
 				// do
 				// {
 				 	ruch = bot.return_move(return_vector_of_possible_moves(),return_vector_of_possible_captures(),is_any_capture_mandatory());
